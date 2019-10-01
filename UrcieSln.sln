@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29324.140
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UrcieSln.WpfUI", "UrcieSln.WpfUI\UrcieSln.WpfUI.csproj", "{745ED619-FC5B-444F-8B75-72C8FCE8E9D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UrcieSln.Drawer", "UrcieSln.Drawer\UrcieSln.Drawer.csproj", "{00A8A7BE-F2A5-4727-97F7-7B47122E0A38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UrcieSln.Domain", "UrcieSln.Domain\UrcieSln.Domain.csproj", "{B460A1F2-BB00-4FC4-B17F-E03F63475785}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{745ED619-FC5B-444F-8B75-72C8FCE8E9D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{745ED619-FC5B-444F-8B75-72C8FCE8E9D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{745ED619-FC5B-444F-8B75-72C8FCE8E9D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{745ED619-FC5B-444F-8B75-72C8FCE8E9D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00A8A7BE-F2A5-4727-97F7-7B47122E0A38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00A8A7BE-F2A5-4727-97F7-7B47122E0A38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00A8A7BE-F2A5-4727-97F7-7B47122E0A38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00A8A7BE-F2A5-4727-97F7-7B47122E0A38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B460A1F2-BB00-4FC4-B17F-E03F63475785}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B460A1F2-BB00-4FC4-B17F-E03F63475785}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B460A1F2-BB00-4FC4-B17F-E03F63475785}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B460A1F2-BB00-4FC4-B17F-E03F63475785}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9C694515-8D27-44F4-BA2E-E10C5B853596}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://alibghz.visualstudio.com/DefaultCollection
+		SccProjectUniqueName0 = UrcieSln.Domain\\UrcieSln.Domain.csproj
+		SccProjectName0 = UrcieSln.Domain
+		SccAuxPath0 = https://alibghz.visualstudio.com/DefaultCollection
+		SccLocalPath0 = UrcieSln.Domain
+		SccProvider0 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName1 = UrcieSln.Drawer\\UrcieSln.Drawer.csproj
+		SccProjectName1 = UrcieSln.Drawer
+		SccAuxPath1 = https://alibghz.visualstudio.com/DefaultCollection
+		SccLocalPath1 = UrcieSln.Drawer
+		SccProvider1 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName2 = UrcieSln.WpfUI\\UrcieSln.WpfUI.csproj
+		SccProjectName2 = UrcieSln.WpfUI
+		SccAuxPath2 = https://alibghz.visualstudio.com/DefaultCollection
+		SccLocalPath2 = UrcieSln.WpfUI
+		SccProvider2 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+	EndGlobalSection
+EndGlobal

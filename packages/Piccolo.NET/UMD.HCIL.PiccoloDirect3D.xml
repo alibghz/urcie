@@ -1,0 +1,1831 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>UMD.HCIL.PiccoloDirect3D</name>
+    </assembly>
+    <members>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Nodes.P3Image">
+            <summary>
+            <b>P3Image</b> is a Direct3D wrapper around a <see cref="T:System.Drawing.Image">
+            System.Drawing.Image</see>.
+            </summary>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.P3Node">
+            <summary>
+            <b>P3Node</b> is the central abstraction in PiccoloDirect3D. All objects that are
+            visible on the screen are instances of the P3Node class. All nodes may have 
+            other "child" nodes added to them. 
+            </summary>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Util.D3DNode">
+            <summary>
+            <b>D3DNode</b> defines an interface for objects that want to render themselves using Direct3D.
+            Typically, to create a Direct3D node, you will extend P3Node or a subclass of P3Node.  If you
+            need to extend some other class, you can implement the D3DNode interface directly.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.D3DNode.Dispose">
+            <summary>
+            Dispose any Direct3D resources associated with the node.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.D3DNode.OnResetDevice">
+            <summary>
+            Called when the device associated with the node is reset.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.D3DNode.InvalidateVertices">
+            <summary>
+            Invalidate the node's cached vertices (typically a VertexBuffer).
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.D3DNode.ValidateVertices(Microsoft.DirectX.Direct3D.Device)">
+            <summary>
+            Update the node's cached vertices.
+            </summary>
+            <param name="device">The device associated with the node.</param>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.P3Node.verticesInvalid">
+            <summary>
+            Indicates whether this node's cached vertices are invalid. 
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.P3Node.vb">
+            <summary>
+            The vertex buffer that stores the vertices for this node.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Node.#ctor">
+            <summary>
+            Constructs a new P3Node.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Node.SetBounds(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.Piccolo.PNode.SetBounds(System.Single,System.Single,System.Single,System.Single)">PNode.SetBounds</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Node.GetValidVertexBuffer(Microsoft.DirectX.Direct3D.Device)">
+            <summary>
+            Returns the vertex buffer, validating it if necessary.
+            </summary>
+            <remarks>
+            The vertex buffer is a cache of the node's vertices.  At any given time, the
+            cache could be invalid.  The vertex buffer should be accessed through this
+            method to ensure that it's contents are up to date.
+            </remarks>
+            <param name="device">The device associated with this node.</param>
+            <returns>A valid vertex buffer.</returns>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Node.Dispose">
+            <summary>
+            Disposes the vertex buffer associated with this node.
+            </summary>
+            <remarks>
+            DirectX resources will be disposed automatically, but in a non-deterministic
+            fashion. Call this method to dispose a node's vertex buffer immediately.
+            </remarks>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Node.OnResetDevice">
+            <summary>
+            Override this method to get notified when the device associated with this node
+            has been reset.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Node.InvalidateVertices">
+            <summary>
+            Invalidate the node's cached vertices.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Node.ValidateVertices(Microsoft.DirectX.Direct3D.Device)">
+            <summary>
+            Update this node's cached vertices.
+            </summary>
+            <remarks>
+            This method will get called before painting a node, if it's Direct3D vertices need
+            to be updated.  By default, this method will fill the vertex buffer.  To create a
+            node that does not use P3Node's default vertex buffer override this method and do not
+            call the base implmentation.  Instead you can update your custom vertices.
+            </remarks>
+            <param name="device">The device associated with this node.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Node.OnVertexBufferCreated(System.Object,System.EventArgs)">
+            <summary>
+            Calls <see cref="M:UMD.HCIL.PiccoloDirect3D.P3Node.FillVertexBuffer(Microsoft.DirectX.Direct3D.VertexBuffer)">P3Node.FillVertexBuffer</see> whenever the
+            vertex buffer is recreated.
+            </summary>
+            <param name="sender">The source of the Created event.</param>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Node.CreateVertexBuffer(Microsoft.DirectX.Direct3D.Device)">
+            <summary>
+            Override this method to create a custom vertex buffer.  Most nodes that extend P3Node
+            will need to override this method since their number and type of vertices will vary.
+            </summary>
+            <param name="device"></param>
+            <remarks>
+            It is not safe to call GetValidVertexBuffer() here, since that method may call
+            CreateVertexBuffer().
+            </remarks>
+            <returns>The new vertex buffer.</returns>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Node.FillVertexBuffer(Microsoft.DirectX.Direct3D.VertexBuffer)">
+            <summary>
+            Override this method to fill the vertex buffer with the appropriate data.  Most nodes
+            that extend P3Node will need to override this method since their number and type of
+            vertices will vary.
+            </summary>
+            <remarks>
+            It is not safe to call GetValidVertexBuffer() here, since that method may call
+            FillVertexBuffer().
+            </remarks>
+            <param name="vb">The vertex buffer to fill.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Node.Paint(UMD.HCIL.Piccolo.Util.PPaintContext)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.Piccolo.PNode.Paint(UMD.HCIL.Piccolo.Util.PPaintContext)">PNode.Paint</see>.
+            </summary>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.P3Node.Brush">
+            <summary>
+            Overridden.  See <see cref="P:UMD.HCIL.Piccolo.PNode.Brush">PNode.Brush</see>.
+            </summary>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.P3Node.VerticesInvalid">
+            <summary>
+            Gets or sets a value indicating whether this node's cached vertices are invalid.
+            </summary>
+            <value>True if this node node's cached vertices are invalid; else false;</value>
+            <remarks>
+            If this property is set to true, the node's cached vertices will be validated
+            at a later point. Note, this property is most often set internally.
+            </remarks>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Nodes.P3Image.VERTEX_COUNT">
+            <summary>
+            The default number of vertices in the vertex buffer.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Nodes.P3Image.image">
+            <summary>
+            The underlying image object.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Nodes.P3Image.texture">
+            <summary>
+            The texture that will be applied to the vertices.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Image.#ctor">
+            <summary>
+            Constructs a new P3Image with a <c>null</c> image.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Image.#ctor(System.Drawing.Image)">
+            <summary>
+            Constructs a new P3Image wrapping the given <see cref="T:System.Drawing.Image">
+            System.Drawing.Image</see>.
+            </summary>
+            <param name="newImage">The image to wrap.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Image.#ctor(System.String)">
+            <summary>
+            Constructs a new P3Image by loading the given file.
+            </summary>
+            <param name="fileName">The filename of the image to load.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Image.#ctor(System.Uri)">
+            <summary>
+            Constructs a new PImage by loading the given URI and wrapping the
+            resulting <see cref="T:System.Drawing.Image">System.Drawing.Image</see>.
+            If the URI is <c>null</c>, create an empty PImage; this behavior is
+            useful when fetching resources that may be missing.
+            </summary>
+            <param name="requestURI">The URI of the image to load.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Image.Dispose">
+            <summary>
+            Overridden.  Disposes the Direct3D texture.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Image.DisposeTexture">
+            <summary>
+            Dispose the Direct3D texture.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Image.CreateVertexBuffer(Microsoft.DirectX.Direct3D.Device)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.PiccoloDirect3D.P3Node.CreateVertexBuffer(Microsoft.DirectX.Direct3D.Device)">P3Node.CreateVertexBuffer</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Image.FillVertexBuffer(Microsoft.DirectX.Direct3D.VertexBuffer)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.PiccoloDirect3D.P3Node.FillVertexBuffer(Microsoft.DirectX.Direct3D.VertexBuffer)">P3Node.FillVertexBuffer</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Image.ValidateVertices(Microsoft.DirectX.Direct3D.Device)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.PiccoloDirect3D.P3Node.ValidateVertices(Microsoft.DirectX.Direct3D.Device)">P3Node.ValidateVertices</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Image.Paint(UMD.HCIL.Piccolo.Util.PPaintContext)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.Piccolo.PNode.Paint(UMD.HCIL.Piccolo.Util.PPaintContext)">PNode.Paint</see>.
+            </summary>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Image.Image">
+            <summary>
+            Gets or sets the image shown by this node.
+            </summary>
+            <value>The image shown by this node.</value>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path">
+            <summary>
+            <b>P3Path</b> is a Direct3D wrapper around a
+            <see cref="T:System.Drawing.Drawing2D.GraphicsPath">
+            System.Drawing.Drawing2D.GraphicsPath</see>.
+            </summary>
+            <remarks>
+            The SetBounds method works by scaling the path to fit into the specified bounds.
+            This normally works well, but if the specified base bounds get too small then it is
+            impossible to expand the path shape again since all its numbers have tended to zero,
+            so application code may need to take this into consideration. 
+            <para>
+            One option that applications have is to call <c>StartResizeBounds</c> before starting
+            an interaction that may make the bounds very small, and calling <c>EndResizeBounds</c>
+            when this interaction is finished. When this is done PPath will use a copy of the
+            original path to do the resizing so the numbers in the path wont loose resolution.
+            </para>
+            <para>
+            This class also provides methods for constructing common shapes using a GraphicsPath.
+            </para>
+            <para>
+            <b>Performance Note</b>:  Checking for intersections between some paths and rectangles
+            can be very slow.  This is due to the way .NET implements the IsVisible method.
+            The problem generally occurs in extreme cases, when the path consists of numerous
+            lines joined at very steep angles, which exhausts the intersection algorithm.
+            One simple workaround is to break the figure up into several PPath nodes.  Also,
+            remember to set the Brush to null if you do not want to a fill a path.  Otherwise,
+            the path will be filled with a white brush, and picking will be more expensive.
+            See <see cref="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.Intersects(System.Drawing.RectangleF)">P3Path.Intersects</see>.
+            </para>
+            </remarks>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Util.TesselationVisitor">
+            <summary>
+            <b>TesselationVisitor</b> abstracts the process of sending a list of geometry.
+            <seealso cref="T:UMD.HCIL.PiccoloDirect3D.Util.Tesselator">Tesselator</seealso>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.TesselationVisitor.TessBegin(UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlPrimitiveType)">
+            <summary>
+            Start of a primitive.
+            </summary>
+            <param name="which"></param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.TesselationVisitor.TessVertex(System.Double[])">
+            <summary>
+            Add a new vertex to the primitive.
+            </summary>
+            <param name="vertex"></param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.TesselationVisitor.TessEnd">
+            <summary>
+            End a primitive.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.TesselationVisitor.TessError(UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessError)">
+            <summary>
+            Send an error.
+            </summary>
+            <param name="error"></param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.#ctor">
+            <summary>
+            Constructs a new P3Path with an empty path.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.#ctor(System.Drawing.Drawing2D.GraphicsPath)">
+            <summary>
+            Constructs a new P3Path wrapping the given
+            <see cref="T:System.Drawing.Drawing2D.GraphicsPath">
+            System.Drawing.Drawing2D.GraphicsPath</see>.
+            </summary>
+            <param name="path">The path to wrap.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.#ctor(System.Drawing.PointF[],System.Byte[])">
+            <summary>
+            Constructs a new P3Path with the given points and point types.
+            </summary>
+            <param name="pts">The points in the path.</param>
+            <param name="types">The types of the points in the path.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.#ctor(System.Drawing.PointF[],System.Byte[],System.Drawing.Pen)">
+            <summary>
+            Constructs a new P3Path with the given points, point types and pen.
+            </summary>
+            <param name="pts">The points in the path.</param>
+            <param name="types">The types of the points in the path.</param>
+            <param name="pen">The pen to use when rendering this node.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.#ctor(System.Drawing.PointF[],System.Byte[],System.Drawing.Drawing2D.FillMode)">
+            <summary>
+            Constructs a new P3Path with the given points, point types and fill mode.
+            </summary>
+            <param name="pts">The points in the path.</param>
+            <param name="types">The types of the points in the path.</param>
+            <param name="fillMode">The fill mode to use when rendering this node.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.#ctor(System.Drawing.PointF[],System.Byte[],System.Drawing.Drawing2D.FillMode,System.Drawing.Pen)">
+            <summary>
+            Constructs a new P3Path with the given points, point types, fill mode and pen.
+            </summary>
+            <param name="pts">The points in the path.</param>
+            <param name="types">The types of the points in the path.</param>
+            <param name="fillMode">The fill mode to use when rendering this node.</param>
+            <param name="pen">The pen to use when rendering this node.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.CreateLine(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Creates a new P3Path with the shape of a line specified by the given coordinates.
+            </summary>
+            <param name="x1">The x-coordinate of the start-point of the line.</param>
+            <param name="y1">The y-coordinate of the start-point of the line.</param>
+            <param name="x2">The x-coordinate of the end-point of the line.</param>
+            <param name="y2">The y-coordinate of the end-point of the line.</param>
+            <returns>The new PPath node.</returns>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.CreateRectangle(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Creates a new P3Path with the shape of the rectangle specified by the given dimensions.
+            </summary>
+            <param name="x">The x-coordinate of the top left corner of the rectangle.</param>
+            <param name="y">The y-coordinate of the top left corner of the rectangle.</param>
+            <param name="width">The width of the rectangle.</param>
+            <param name="height">The height of the rectangle.</param>
+            <returns>The new PPath node.</returns>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.CreateEllipse(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Creates a new P3Path with the shape of the ellipse specified by the given dimensions.
+            </summary>
+            <param name="x">
+            The x-coordinate of the top left corner of the bounding box of the ellipse.
+            </param>
+            <param name="y">
+            The y-coordinate of the top left corner of the bounding box of the ellipse.
+            </param>
+            <param name="width">The width of the ellipse.</param>
+            <param name="height">The height of the ellipse.</param>
+            <returns>The new PPath node.</returns>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.CreatePolygon(System.Drawing.PointF[])">
+            <summary>
+            Creates a new P3Path with the shape of the polygon specified by the given dimension.
+            </summary>
+            <param name="points">The points in the desired polygon.</param>
+            <returns>The new PPath node.</returns>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.StartResizeBounds">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.Piccolo.PNode.StartResizeBounds">PNode.StartResizeBounds</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.EndResizeBounds">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.Piccolo.PNode.EndResizeBounds">PNode.EndResizeBounds</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.InternalUpdateBounds(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Overridden.  Set the bounds of this path.
+            </summary>
+            <param name="x">The new x-coordinate of the bounds/</param>
+            <param name="y">The new y-coordinate of the bounds.</param>
+            <param name="width">The new width of the bounds.</param>
+            <param name="height">The new height of the bounds.</param>
+            <returns>True if the bounds have changed; otherwise, false.</returns>
+            <remarks>
+            This works by scaling the path to fit into the specified bounds.  This normally
+            works well, but if the specified base bounds get too small then it is impossible
+            to expand the path shape again since all its numbers have tended to zero, so
+            application code may need to take this into consideration.
+            </remarks>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.Intersects(System.Drawing.RectangleF)">
+            <summary>
+            Returns true if this path intersects the given rectangle.
+            </summary>
+            <remarks>
+            This method first checks if the interior of the path intersects with the rectangle.
+            If not, the method then checks if the path bounding the pen stroke intersects with
+            the rectangle.  If either of these cases are true, this method returns true.
+            <para>
+            <b>Performance Note</b>:  For some paths, this method can be very slow.  This is due
+            to the implementation of IsVisible.  The problem usually occurs when many lines are
+            joined at very steep angles.  See the documentation above for workarounds.
+            </para>
+            </remarks>>
+            <param name="bounds">The rectangle to check for intersection.</param>
+            <returns>True if this path intersects the given rectangle; otherwise, false.</returns>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.PickAfterChildren(UMD.HCIL.Piccolo.Util.PPickPath)">
+            <summary>
+            Overridden.  Performs picking in canvas coordinates if <see cref="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.PickMode">PickMode</see>
+            is false.
+            </summary>
+            <remarks>
+            Due to the implementation of the GraphicsPath object, picking in canvas coordinates
+            is more accurate, but will introduce a significant performance hit.
+            </remarks>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.Intersects(System.Drawing.RectangleF,UMD.HCIL.Piccolo.Util.PMatrix)">
+            <summary>
+            Returns true if this path intersects the given rectangle.
+            </summary>
+            <remarks>
+            This method first checks if the interior of the path intersects with the rectangle.
+            If not, the method then checks if the path bounding the pen stroke intersects with
+            the rectangle.  If either of these cases are true, this method returns true.
+            <para>
+            <b>Performance Note</b>:  For some paths, this method can be very slow.  This is due
+            to the implementation of IsVisible.  The problem usually occurs when many lines are
+            joined at very steep angles.  See the documentation above for workarounds.
+            </para>
+            </remarks>
+            <param name="bounds">The rectangle to check for intersection.</param>
+            <param name="matrix">
+            A matrix object that specifies a transform to apply to the path and bounds before
+            checking for an intersection.
+            </param>
+            <returns>True if this path intersects the given rectangle; otherwise, false.</returns>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.SetTempRegion(System.Drawing.Drawing2D.GraphicsPath,UMD.HCIL.Piccolo.Util.PMatrix,System.Boolean)">
+            <summary>
+            Sets the temp region to the transformed path, widening the path if
+            requested to do so.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.UpdateBoundsFromPath">
+            <summary>
+            This method is called to update the bounds whenever the underlying path changes.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.AddArc(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            See <see cref="M:System.Drawing.Drawing2D.GraphicsPath.AddArc(System.Drawing.RectangleF,System.Single,System.Single)">GraphicsPath.AddArc</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.AddBezier(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            See <see cref="M:System.Drawing.Drawing2D.GraphicsPath.AddBezier(System.Drawing.PointF,System.Drawing.PointF,System.Drawing.PointF,System.Drawing.PointF)">GraphicsPath.AddBezier</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.AddClosedCurve(System.Drawing.PointF[])">
+            <summary>
+            See <see cref="M:System.Drawing.Drawing2D.GraphicsPath.AddClosedCurve(System.Drawing.PointF[])">GraphicsPath.AddClosedCurve</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.AddCurve(System.Drawing.PointF[])">
+            <summary>
+            See <see cref="M:System.Drawing.Drawing2D.GraphicsPath.AddCurve(System.Drawing.PointF[])">GraphicsPath.AddCurve</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.AddEllipse(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            See <see cref="M:System.Drawing.Drawing2D.GraphicsPath.AddEllipse(System.Drawing.RectangleF)">GraphicsPath.AddEllipse</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.AddLine(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            See <see cref="M:System.Drawing.Drawing2D.GraphicsPath.AddLine(System.Drawing.PointF,System.Drawing.PointF)">GraphicsPath.AddLine</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.AddPath(System.Drawing.Drawing2D.GraphicsPath,System.Boolean)">
+            <summary>
+            See <see cref="M:System.Drawing.Drawing2D.GraphicsPath.AddPath(System.Drawing.Drawing2D.GraphicsPath,System.Boolean)">GraphicsPath.AddPath</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.AddPolygon(System.Drawing.PointF[])">
+            <summary>
+            See <see cref="M:System.Drawing.Drawing2D.GraphicsPath.AddPolygon(System.Drawing.PointF[])">GraphicsPath.AddPolygon</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.AddRectangle(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            See <see cref="M:System.Drawing.Drawing2D.GraphicsPath.AddRectangle(System.Drawing.RectangleF)">GraphicsPath.AddRectangle</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.CloseFigure">
+            <summary>
+            See <see cref="M:System.Drawing.Drawing2D.GraphicsPath.CloseFigure">GraphicsPath.CloseFigure</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.CloseAllFigures">
+            <summary>
+            See <see cref="M:System.Drawing.Drawing2D.GraphicsPath.CloseAllFigures">GraphicsPath.CloseAllFigures</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.Reset">
+            <summary>
+            See <see cref="M:System.Drawing.Drawing2D.GraphicsPath.Reset">GraphicsPath.Reset</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.ValidateVertices(Microsoft.DirectX.Direct3D.Device)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.PiccoloDirect3D.P3Node.ValidateVertices(Microsoft.DirectX.Direct3D.Device)">P3Node.ValidateVertices</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.CreateVertexBuffer(Microsoft.DirectX.Direct3D.Device)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.PiccoloDirect3D.P3Node.CreateVertexBuffer(Microsoft.DirectX.Direct3D.Device)">P3Node.CreateVertexBuffer</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.FillVertexBuffer(Microsoft.DirectX.Direct3D.VertexBuffer)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.PiccoloDirect3D.P3Node.FillVertexBuffer(Microsoft.DirectX.Direct3D.VertexBuffer)">P3Node.FillVertexBuffer</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.CacheFill">
+            <summary>
+            Tesselate and cache the interior of the path.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.CacheStroke">
+            <summary>
+            Tesselate and cache the contours of the path.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.CacheFlatPath(System.Drawing.Drawing2D.GraphicsPath)">
+            <summary>
+            Cache a flattened path.
+            </summary>
+            <param name="flattenedPath">The flattened path to cache.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.Tesselate(System.Drawing.Drawing2D.GraphicsPath,System.Int32,System.Boolean,System.Boolean)">
+            <summary>
+            Tesselate the path.
+            </summary>
+            <param name="path">The path to tesselate.</param>
+            <param name="tesselationColor">The color to use for the vertices.</param>
+            <param name="widen">Indicates whether or not to widen the path.</param>
+            <param name="clearCache">Indicates whether or not to clear the cache.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.TessBegin(UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlPrimitiveType)">
+            <summary>
+            Implements <see cref="M:UMD.HCIL.PiccoloDirect3D.Util.TesselationVisitor.TessBegin(UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlPrimitiveType)">
+            TesselationVisitor.TessBegin</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.TessVertex(System.Double[])">
+            <summary>
+            Implements <see cref="M:UMD.HCIL.PiccoloDirect3D.Util.TesselationVisitor.TessVertex(System.Double[])">
+            TesselationVisitor.TessVertex</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.TessEnd">
+            <summary>
+            Implements <see cref="M:UMD.HCIL.PiccoloDirect3D.Util.TesselationVisitor.TessEnd">
+            TesselationVisitor.TessEnd</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.TessError(UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessError)">
+            <summary>
+            Implements <see cref="M:UMD.HCIL.PiccoloDirect3D.Util.TesselationVisitor.TessError(UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessError)">
+            TesselationVisitor.TessError</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.Paint(UMD.HCIL.Piccolo.Util.PPaintContext)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.PiccoloDirect3D.P3Node.Paint(UMD.HCIL.Piccolo.Util.PPaintContext)">P3Node.Paint</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.PaintFill(UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext)">
+            <summary>
+            Paints the fill using the brush associated with this node.
+            </summary>
+            <param name="paintContext">The paint context to use for painting this node.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.PaintStroke(UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext)">
+            <summary>
+            Paints the stroke using the pen associated with this path.
+            </summary>
+            <param name="paintContext">The paint context to use for painting this node.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.Render(Microsoft.DirectX.Direct3D.Device,System.Int32,System.Drawing.Drawing2D.GraphicsPath)">
+            <summary>
+            Renders the flattened path to the device using the specified color. 
+            </summary>
+            <param name="device">The device to use for rendering the path.</param>
+            <param name="color">The color to use for the vertices.</param>
+            <param name="flattenedPath">The path to render.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.Render(Microsoft.DirectX.Direct3D.Device,System.Collections.ArrayList)">
+            <summary>
+            Renders the list of primitives to the device.
+            </summary>
+            <param name="device">The device to use for rendering the primitives.</param>
+            <param name="renderList">The list of primitives to render.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.Render(Microsoft.DirectX.Direct3D.Device,Microsoft.DirectX.Direct3D.VertexBuffer,System.Int32,System.Int32)">
+            <summary>
+            Renders a portion the vertex buffer to the device.
+            </summary>
+            <param name="device">The device to use for rendering the primitives.</param>
+            <param name="vb">The vertex buffer to render.</param>
+            <param name="start">The start index of the vertices to render.</param>
+            <param name="end">The end index of the vertices to render.</param>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.Pen">
+            <summary>
+            Gets or sets the pen used when rendering this node.
+            </summary>
+            <value>The pen used when rendering this node.</value>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.PickMode">
+            <summary>
+            Gets or sets the mode used to pick this node.
+            <seealso cref="T:UMD.HCIL.Piccolo.Nodes.PPath.PathPickMode">PathPickMode</seealso>
+            </summary>
+            <value>The mode used to pick this node.</value>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.RenderMode">
+            <summary>
+            Gets or sets the mode used to render this node.
+            </summary>
+            <value>The mode used to render this node.</value>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.Tolerance">
+            <summary>
+            Gets or sets the tolerance used to flatten and tesselate paths.
+            </summary>
+            <value>The tolerance used to flatten and tesselate paths.</value>
+            <remarks>
+            The flatness will be equal to the tolerance divided by the current scale.
+            The tolerance has a default value of .25f.
+            </remarks>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.PathReference">
+            <summary>
+            Gets a reference to the underlying path object.
+            </summary>
+            <value>The underlying path object.</value>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.FillMode">
+            <summary>
+            See <see cref="P:System.Drawing.Drawing2D.GraphicsPath.FillMode">GraphicsPath.FillMode</see>.
+            </summary>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.PathData">
+            <summary>
+            See <see cref="P:System.Drawing.Drawing2D.GraphicsPath.PathData">GraphicsPath.PathData</see>.
+            </summary>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.PointCount">
+            <summary>
+            See <see cref="P:System.Drawing.Drawing2D.GraphicsPath.PointCount">GraphicsPath.PointCount</see>.
+            </summary>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.PrimitiveTypeInfo">
+            <summary>
+            Stores details about a cached primitive type.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.PrimitiveTypeInfo.#ctor(System.Int32,System.Int32,System.Int32,Microsoft.DirectX.Direct3D.PrimitiveType)">
+            <summary>
+            Constructs a new PrimitiveTypeInfo.
+            </summary>
+            <param name="start">The start index of the primitive.</param>
+            <param name="end">The end index of the primitive.</param>
+            <param name="color">The color of the primitive.</param>
+            <param name="type">The type of the primitive.</param>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.PrimitiveTypeInfo.Start">
+            <summary>
+            The start index of the primitive.
+            </summary>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.PrimitiveTypeInfo.End">
+            <summary>
+            The end index of the primitive.
+            </summary>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.PrimitiveTypeInfo.Color">
+            <summary>
+            The color of the primitive.
+            </summary>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.PrimitiveTypeInfo.Type">
+            <summary>
+            The type of the primitive.
+            </summary>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.PathRenderMode">
+            <summary>
+            Represents the types of rendering modes for a P3Path object.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.PathRenderMode.Cached">
+            <summary>
+            Faster Rendering.  Paths are tesselated and cached only when the
+            underlying path data is modified.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Nodes.P3Path.PathRenderMode.Accurate">
+            <summary>
+            Slower and more accurate rendering.  Paths are tesselated on every
+            render.
+            </summary>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text">
+            <summary>
+            <b>P3Text</b> is a multi-line Direct3D text node.  The text will wrap based on the width
+            of the node's bounds.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.DEFAULT_FONT">
+            <summary>
+            The default font to use when rendering this P3Text node.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.#ctor">
+            <summary>
+            Constructs a new P3Text with an empty string.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.#ctor(System.String)">
+            <summary>
+            Constructs a new P3Text with the given string.
+            </summary>
+            <param name="aText">The desired text string for this P3Text.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.Dispose">
+            <summary>
+            Overridden.  Disposes the Direct3D font and sprite.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.DisposeFont">
+            <summary>
+            Dispose the Direct3D font.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.DisposeSprite">
+            <summary>
+            Dispose the Direct3D sprite.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.ValidateVertices(Microsoft.DirectX.Direct3D.Device)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.PiccoloDirect3D.P3Node.ValidateVertices(Microsoft.DirectX.Direct3D.Device)">P3Node.ValidateVertices</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.Paint(UMD.HCIL.Piccolo.Util.PPaintContext)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.Piccolo.PNode.Paint(UMD.HCIL.Piccolo.Util.PPaintContext)">PNode.Paint</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.InternalUpdateBounds(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.Piccolo.PNode.InternalUpdateBounds(System.Single,System.Single,System.Single,System.Single)">PNode.InternalUpdateBounds</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.RecomputeBounds">
+            <summary>
+            Override this method to change the way bounds are computed. For example
+            this is where you can control how lines are wrapped.
+            </summary>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.ConstrainWidthToTextWidth">
+            <summary>
+            Gets or sets a value indicating whether this node changes its width to fit
+            the width of its text.
+            </summary>
+            <value>
+            True if this node changes its width to fit its text width; otherwise, false.
+            </value>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.ConstrainHeightToTextHeight">
+            <summary>
+            Gets or sets a value indicating whether this node changes its height to fit
+            the height of its text.
+            </summary>
+            <value>
+            True if this node changes its height to fit its text height; otherwise, false.
+            </value>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.Text">
+            <summary>
+            Gets or sets the text for this node.
+            </summary>
+            <value>This node's text.</value>
+            <remarks>
+            The text will be broken up into multiple lines based on the size of the text
+            and the bounds width of this node.
+            </remarks>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.TextAlignment">
+            <summary>
+            Gets or sets a value specifiying the alignment to use when rendering this
+            node's text.
+            </summary>
+            <value>The alignment to use when rendering this node's text.</value>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.TextBrush">
+            <summary>
+            Gets or sets the brush to use when rendering this node's text.
+            </summary>
+            <value>The brush to use when rendering this node's text.</value>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.Font">
+            <summary>
+            Gets or sets the font to use when rendering this node's text.
+            </summary>
+            <value>The font to use when rendering this node's text.</value>
+            <remarks>
+            <para>
+            This font will not necessarily determine the actual render size of the
+            text.  The actual render size can be set through the
+            <see cref="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.DisplayFontSize">DisplayFontSize</see> property.
+            </para>
+            <para>
+            Set the size of the font larger than the DisplayFontSize to keep the text
+            smooth at larger scale factors.
+            </para>
+            </remarks>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.DisplayFontSize">
+            <summary>
+            The size that the text is actually rendered at.
+            </summary>
+            <remarks>
+            <para>
+            Use this property to keep the text smooth at larger scale factors.
+            </para>
+            <para>
+            The text will be scaled to the DisplayFontSize at render time.  Setting the
+            size of the <see cref="P:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text.Font">Font</see> larger than the display font size
+            will keep the text smooth as the user zooms in.
+            </para>
+            </remarks>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext">
+            <summary>
+            A simple paint context for Direct3D rendering.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext.#ctor(System.Drawing.Graphics,Microsoft.DirectX.Direct3D.Device,UMD.HCIL.PiccoloDirect3D.P3Canvas)">
+            <summary>
+            Constructs a new P3PaintContext.
+            </summary>
+            <param name="g">The GDI+ graphics context to associate with this paint context.</param>
+            <param name="device">The device to associate with this paint context</param>
+            <param name="canvas">The canvas that the paint context will render on.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext.InitializeStacks">
+            <summary>
+            Overridden.  Pushes the initial transform and clips onto their respective stacks.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext.PushClip(System.Drawing.Region)">
+            <summary>
+            Overridden.  PiccoloDirect3D only supports rectangular clip regions.  So, if a
+            non-rectangular region is pushed, the bounds of that region will be used instead.
+            </summary>
+            <param name="aClip">The clip to push.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext.PushClip(System.Drawing.RectangleF)">
+            <summary>
+            Pushes the current clip onto the clip stack and sets clip of the device to
+            the intersection of the current clip and the given clip.
+            </summary>
+            <remarks>
+            The intersection of the current local clip and the new local clip is also pushed onto
+            the local clip stack.
+            </remarks>
+            <param name="aClip">The clip to push.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext.PopClip">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.Piccolo.Util.PPaintContext.PopClip">PPaintContext.PopClip</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext.PushMatrix(UMD.HCIL.Piccolo.Util.PMatrix)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.Piccolo.Util.PPaintContext.PushMatrix(UMD.HCIL.Piccolo.Util.PMatrix)">PPaintContext.PushTransform</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext.PopMatrix">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.Piccolo.Util.PPaintContext.PopMatrix">PPaintContext.PopTransform</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext.SetWorldMatrix(UMD.HCIL.Piccolo.Util.PMatrix)">
+            <summary>
+            Sets the world transform of the device.
+            </summary>
+            <param name="matrix"></param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext.OnHighRenderQuality(System.Drawing.Graphics,UMD.HCIL.Piccolo.PCanvas)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.Piccolo.Util.PPaintContext.OnHighRenderQuality(System.Drawing.Graphics,UMD.HCIL.Piccolo.PCanvas)">
+            PPaintContext.OnHighRenderQuality</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext.OnLowRenderQuality(System.Drawing.Graphics,UMD.HCIL.Piccolo.PCanvas)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.Piccolo.Util.PPaintContext.OnLowRenderQuality(System.Drawing.Graphics,UMD.HCIL.Piccolo.PCanvas)">
+            PPaintContext.OnLowRenderQuality</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext.PaintClipRegion(System.Drawing.Brush)">
+            <summary>
+            Overridden.  This method will not paint anything.
+            </summary>
+            <remarks>
+            Region management is disabled for PiccoloDirect3D since presenting the entire backbuffer
+            is more efficient.  Thus, this method is left empty.
+            </remarks>
+            <param name="brush">The brush to use for painting the clipping region.</param>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext.Device">
+            <summary>
+            Gets the device associated with this paint context.
+            </summary>
+            <value>The device associated with this paint context.</value>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext.Tesselator">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext.Transform">
+            <summary>
+            Gets the current transform.
+            </summary>
+            <value>The current transform.</value>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext.Scale">
+            <summary>
+            Overridden.  See <see cref="P:UMD.HCIL.Piccolo.Util.PPaintContext.Scale">PPaintContext.Scale</see>.
+            </summary>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Util.P3PaintContext.DeviceClip">
+            <summary>
+            Sets the clip of the device.
+            </summary>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Util.P3Util">
+            <summary>
+            A utility class for PiccoloDirect3D.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.Application_ApplicationExit(System.Object,System.EventArgs)">
+            <summary>
+            Disposes the null device, if it exists.
+            </summary>
+            <param name="sender">The source of the ApplicationExit event.</param>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.CreateTexturedRectangle(Microsoft.DirectX.Direct3D.CustomVertex.PositionNormalTextured[],System.Int32,System.Drawing.RectangleF)">
+            <summary>
+            Creates a textured rectangle from a rectangle structure.
+            </summary>
+            <param name="verts">The destination vertices.</param>
+            <param name="index">The start index in the destination vertices.</param>
+            <param name="rect">The source rectangle structure.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.CreateColoredRectangle(Microsoft.DirectX.Direct3D.CustomVertex.PositionColored[],System.Int32,System.Drawing.RectangleF,System.Int32)">
+            <summary>
+            Creates a colored rectangle from a rectangle structure.
+            </summary>
+            <param name="verts">The destination vertices.</param>
+            <param name="index">The start index in the destination vertices.</param>
+            <param name="rect">The source rectangle structure.</param>
+            <param name="color">The color of the vertices.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.CreateColoredRectangle(Microsoft.DirectX.Direct3D.CustomVertex.PositionColored[],System.Int32,System.Single,System.Single,System.Single,System.Single,System.Int32)">
+            <summary>
+            Creates a colored rectangle from a rectangle structure.
+            </summary>
+            <param name="verts">The destination vertices.</param>
+            <param name="index">The start index in the destination vertices.</param>
+            <param name="x">The x-coordinate of the source rectangle.</param>
+            <param name="y">The y-coordinate of the source rectangle.</param>
+            <param name="width">The width of the source rectangle.</param>
+            <param name="height">The height of the source rectangle.</param>
+            <param name="color">The color of the vertices.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.CreateColoredRectangleOutline(Microsoft.DirectX.Direct3D.CustomVertex.PositionColored[],System.Int32,System.Drawing.RectangleF,System.Int32)">
+             <summary>
+            Creates a rectangle line strip from a rectangle structure.
+             </summary>
+             <param name="verts">The destination vertices.</param>
+             <param name="index">The start index in the destination vertices.</param>
+             <param name="rect">The source rectangle structure.</param>
+             <param name="color">The color of the vertices.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.CreateColoredLine(Microsoft.DirectX.Direct3D.CustomVertex.PositionColored[],System.Int32,System.Single,System.Single,System.Single,System.Single,System.Int32)">
+            <summary>
+            Creates a line from the given points.
+            </summary>
+            <param name="verts">The destination vertices.</param>
+            <param name="index">The start index in the destination vertices.</param>
+            <param name="x1">The x-coordinate of the first point.</param>
+            <param name="y1">The y-coordinate of the first point..</param>
+            <param name="x2">The x-coordinate of the second point.</param>
+            <param name="y2">The y-coordinate of the second point.</param>
+            <param name="color">The color of the vertices.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.CreateColoredVertexList(Microsoft.DirectX.Direct3D.CustomVertex.PositionColored[],System.Drawing.PointF[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Creates a colored vertex list from the points array.
+            </summary>
+            <param name="verts">The destination vertices.</param>
+            <param name="points">The source points array.</param>
+            <param name="srcIndex">The start index in the source array.</param>
+            <param name="dstIndex">The start index in the destination vertices.</param>
+            <param name="count">The number of vertices to copy.</param>
+            <param name="color">The color of the vertices.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.MeasureString(Microsoft.DirectX.Direct3D.Font,Microsoft.DirectX.Direct3D.Sprite,System.String,System.Int32,System.Drawing.Color)">
+            <summary>
+            Measures the rectangle dimensions of the specified text string when
+            drawn with the specified <see cref="T:Microsoft.DirectX.Direct3D.Sprite">
+            Microsoft.DirectX.Direct3D.Sprite</see> object.
+            </summary>
+            <param name="font">
+            The Direct3D font for which to measure the specified text.
+            </param>
+            <param name="sprite">
+            A <see cref="T:Microsoft.DirectX.Direct3D.Sprite">Sprite</see> object that
+            contains the string.
+            </param>
+            <param name="text">String to measure.</param>
+            <param name="width">Maximum width of the string.</param>
+            <param name="color">Color of the text.</param>
+            <returns>
+            A Rectangle structure that contains the rectangle, in logical coordinates, that
+            encompasses the formatted text string.
+            </returns>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.WrapString(Microsoft.DirectX.Direct3D.Sprite,Microsoft.DirectX.Direct3D.Font,System.String,System.Int32,System.Drawing.Color)">
+            <summary>
+            Wraps the specified text string, given the specified width and
+            <see cref="T:Microsoft.DirectX.Direct3D.Sprite">
+            Microsoft.DirectX.Direct3D.Sprite</see> object.
+            </summary>
+            <param name="sprite">
+            A <see cref="T:Microsoft.DirectX.Direct3D.Sprite">Sprite</see> object that
+            contains the string.
+            </param>
+            <param name="font">
+            The Direct3D font for which to measure the specified text.
+            </param>
+            <param name="text">String to wrap.</param>
+            <param name="width">Maximum width of the string.</param>
+            <param name="color">Color of the text.</param>
+            <returns>
+            A string that has been wrapped with the specified width.
+            </returns>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GetD3DAlignment(System.Drawing.StringAlignment)">
+            <summary>
+            Converts a <see cref="T:System.Drawing.StringAlignment">
+            System.Drawing.StringAlignment</see> to the Direct3D equivalent.
+            </summary>
+            <param name="alignment">
+            A <see cref="T:System.Drawing.StringAlignment">StringAlignment</see>.
+            </param>
+            <returns>
+            A <see cref="T:Microsoft.DirectX.Direct3D.DrawTextFormat">
+            Microsoft.DirectX.Direct3D.DrawTextFormat</see> that represents the
+            specified <see cref="T:System.Drawing.StringAlignment">StringAlignment</see>.
+            </returns>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.CreateBasicScenegraph">
+            <summary>
+            Creates a basic PiccoloDirect3D scene graph.
+            </summary>
+            <returns>The main camera node in the new scene graph.</returns>
+            <remarks>
+            The scene graph will consist of  root node with two children, a layer and a
+            camera.  Additionally, The camera will be set to view the layer.  Typically,
+            you will want to add new nodes to the layer.
+            </remarks>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GluTessBeginCallBack(System.IntPtr,UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlCallbackName,UMD.HCIL.PiccoloDirect3D.Util.P3Util.BeginCallback)">
+            <summary>
+            Sets the begin callback for the specified tesselation object.
+            </summary>
+            <param name="tesselationObject">The tesselation object.</param>
+            <param name="which">The type of callback being invoked.</param>
+            <param name="callback">The begin callback delegate.</param>
+            <remarks>
+            The begin callback is invoked to indicate the start of a (triangle) primitive.
+            </remarks>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GluTessEndCallBack(System.IntPtr,UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlCallbackName,UMD.HCIL.PiccoloDirect3D.Util.P3Util.EndCallback)">
+            <summary>
+            Sets the end callback for the specified tesselation object.
+            </summary>
+            <param name="tesselationObject">The tesselation object.</param>
+            <param name="which">The type of callback being invoked.</param>
+            <param name="callback">The end callback delegate.</param>
+            <remarks>
+            The end callback is invoked to indicate the end of a primitive.
+            </remarks>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GluTessVertexCallBack(System.IntPtr,UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlCallbackName,UMD.HCIL.PiccoloDirect3D.Util.P3Util.VertexCallback)">
+            <summary>
+            Sets the vertex callback for the specified tesselation object.
+            </summary>
+            <param name="tesselationObject">The tesselation object.</param>
+            <param name="which">The type of callback being invoked.</param>
+            <param name="callback">The vertex callback delegate.</param>
+            <remarks>
+            The	vertex callback	is invoked between the begin and end callbacks to define
+            the vertices of the triangles created by the tessellation process.
+            </remarks>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GluTessErrorCallBack(System.IntPtr,UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlCallbackName,UMD.HCIL.PiccoloDirect3D.Util.P3Util.ErrorCallback)">
+            <summary>
+            Sets the error callback for the specified tesselation object.
+            </summary>
+            <param name="tesselationObject">The tesselation object.</param>
+            <param name="which">The type of callback being invoked.</param>
+            <param name="callback">The error callback delegate.</param>
+            <remarks>
+            The	error callback is invoked when an error is encountered.
+            </remarks>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GluTessCombineCallBack(System.IntPtr,UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlCallbackName,UMD.HCIL.PiccoloDirect3D.Util.P3Util.CombineCallback)">
+            <summary>
+            Sets the combine callback for the specified tesselation object.
+            </summary>
+            <param name="tesselationObject">The tesselation object.</param>
+            <param name="which">The type of callback being invoked.</param>
+            <param name="callback">The combine callback delegate.</param>
+            <remarks>
+            The	combine	callback is invoked to create a new vertex when the tessellation
+            detects an intersection, or wishes to merge features.
+            </remarks>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GluNewTess">
+            <summary>
+            Create a tesselation object.
+            </summary>
+            <returns>Returns a pointer to the new tessellation object.</returns>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GluTessNormal(System.IntPtr,System.Double,System.Double,System.Double)">
+            <summary>
+            Specify a normal for a polygon.
+            </summary>
+            <param name="tess">Specifies the tessellation object.</param>
+            <param name="x">Specifies the first component of the normal.</param>
+            <param name="y">Specifies the second component of the normal.</param>
+            <param name="z">Specifies the third component of the normal.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GluTessProperty(System.IntPtr,UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessProperty,System.Double)">
+            <summary>
+            Set	a tessellation object property.
+            </summary>
+            <param name="tess">Specifies the tessellation object.</param>
+            <param name="property">Specifies the property to be set.</param>
+            <param name="value">Specifies the value of the indicated property.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.SetWindingRule(System.IntPtr,UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessWinding)">
+            <summary>
+            Sets the winding rule property of the given tesselation object.
+            </summary>
+            <param name="tess">Specifies the tesselation object.</param>
+            <param name="rule">Specifies the winding rule to use.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GluTessBeginPolygon(System.IntPtr,System.IntPtr)">
+            <summary>
+            Begin a polygon description.
+            </summary>
+            <param name="tess">Specifies the tesselation object.</param>
+            <param name="data">Specifies a pointer to user polygon data.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GluTessBeginContour(System.IntPtr)">
+            <summary>
+            Begin a contour description.
+            </summary>
+            <param name="tess">Specifies the tesselation object.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GluTessVertex(System.IntPtr,System.Double[],System.IntPtr)">
+            <summary>
+            Specify a vertex on a polygon.
+            </summary>
+            <param name="tess">Specifies the tesselation object.</param>
+            <param name="coords">Specifies the coordinates of the vertex.</param>
+            <param name="data">
+            Specifies an opaque pointer passed back to the program with the
+            vertex callback.
+            </param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GluTessEndContour(System.IntPtr)">
+            <summary>
+            End a contour description.
+            </summary>
+            <param name="tess">Specifies the tesselation object.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GluTessEndPolygon(System.IntPtr)">
+            <summary>
+            End a polygon description.
+            </summary>
+            <param name="tess">Specifies the tesselation object.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GluDeleteTess(System.IntPtr)">
+            <summary>
+            Destroy a tessellation object.
+            </summary>
+            <param name="tess">Specifies the tesselation object.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GetD3DPrimitiveType(UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlPrimitiveType)">
+            <summary>
+            Converts an OpenGL primitive type to the Direct3D equivalent.
+            </summary>
+            <param name="type">An OpenGL primitive type.</param>
+            <returns>
+            A <see cref="T:Microsoft.DirectX.Direct3D.PrimitiveType">PrimitiveType</see> that represents the
+            specified <see cref="T:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlPrimitiveType">GlPrimitiveType</see>.
+            </returns>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.Util.P3Util.NullDevice">
+            <summary>
+            Returns a device that is connected to an invisible window.
+            </summary>
+            <remarks>
+            This is useful for creating resources, when you do not have access to
+            a Device.  See <see cref="T:UMD.HCIL.PiccoloDirect3D.Nodes.P3Text">
+            UMD.HCIL.PiccoloDirect3D.Nodes.P3Text</see> for an example.
+            </remarks>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessProperty">
+            <summary>
+            Represents properties stored in a tesselation object.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessProperty.WindingRule">
+            <summary>
+            Specifies which parts of the polygon are on the interior.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessProperty.BoundaryOnly">
+            <summary>
+            Specifies whether to return the contours of a polygon or a tesselation.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessProperty.Tolerance">
+            <summary>
+            Specifies a tolerance for merging features to reduce the size of the output.
+            </summary>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessWinding">
+            <summary>
+            Used to determine which parts of the polygon are on the interior.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessWinding.WindingOdd">
+            <summary>
+            Classifies a region as inside if its winding number	is odd.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessWinding.WindingNonzero">
+            <summary>
+            Classifies a region as inside if its winding number	is non-zero. 
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessWinding.WindingPositive">
+            <summary>
+            Classifies a region as inside if its winding number	is positive.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessWinding.WindingNegative">
+            <summary>
+            Classifies a region as inside if its winding number	is negative.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessWinding.WindingAbsGeqTwo">
+            <summary>
+            Classifies a region as inside if its winding number	has an absolute
+            value of at least 2.
+            </summary>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlPrimitiveType">
+            <summary>
+            Specifies an OpenGl primitive
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlPrimitiveType.Points">
+            <summary>
+            Treats each vertex as a single point.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlPrimitiveType.Lines">
+            <summary>
+            Treats each pair of vertices as an independent line	segment.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlPrimitiveType.LineLoop">
+            <summary>
+            Draws a connected group of line segments from the first vertex to
+            the last, then back to the first.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlPrimitiveType.LineStrip">
+            <summary>
+            Draws a connected group of line segments from the first vertex to
+            the last.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlPrimitiveType.Triangles">
+            <summary>
+            Treats each triplet of vertices as an independent triangle.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlPrimitiveType.TriangleStrip">
+            <summary>
+            Draws a connected group of triangles where one triangle is defined
+            for each vertex presented after the first two vertices.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlPrimitiveType.TriangleFan">
+            <summary>
+            Draws a connected group of triangles where one triangle is defined
+            for each vertex presented after the first two vertices.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlPrimitiveType.Quads">
+            <summary>
+            Treats each group of four vertices as an independent quadrilateral. 
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlPrimitiveType.QuadStrip">
+            <summary>
+            Draws a connected group of quadrilaterals.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlPrimitiveType.Polygon">
+            <summary>
+            Draws a single, convex polygon.
+            </summary>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlCallbackName">
+            <summary>
+            Specifies a callback to be used by a tessellation object.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlCallbackName.Begin">
+            <summary>
+            Invoked to indicate the start of a (triangle) primitive.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlCallbackName.Vertex">
+            <summary>
+            Invoked between the begin and end callbacks to define the vertices of the
+            triangles created by the tessellation process.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlCallbackName.End">
+            <summary>
+            Invoked to indicate the end of a primitive.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlCallbackName.Error">
+            <summary>
+            Invoked when an error is encountered.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlCallbackName.EdgeFlag">
+            <summary>
+            Invoked to indicate which edges lie on the polygon boundary.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlCallbackName.Combine">
+            <summary>
+            Invoked to create a new vertex when the tessellation detects an intersection,
+            or wishes to merge features.
+            </summary>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessError">
+            <summary>
+            Specifies the types of errors that can occur during the tesselation process.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessError.Error1">
+            <summary>
+            Indicates that Error 1 has occured.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessError.Error2">
+            <summary>
+            Indicates that Error 2 has occured. 
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessError.Error3">
+            <summary>
+            Indicates that Error 3 has occured.  
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessError.Error4">
+            <summary>
+             Indicates that Error 4 has occured. 
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessError.Error5">
+            <summary>
+             Indicates that Error 5 has occured. 
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessError.Error6">
+            <summary>
+             Indicates that Error 6 has occured. 
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessError.Error7">
+            <summary>
+             Indicates that Error 7 has occured. 
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessError.Error8">
+            <summary>
+             Indicates that Error 8 has occured. 
+            </summary>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Util.P3Util.BeginCallback">
+            <summary>
+            Invoked to indicate the start of a (triangle) primitive.
+            </summary>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Util.P3Util.EndCallback">
+            <summary>
+            Invoked to indicate the end of a primitive.
+            </summary>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Util.P3Util.VertexCallback">
+            <summary>
+            Invoked between the begin and end callbacks to define the vertices of the
+            triangles created by the tessellation process.
+            </summary>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Util.P3Util.ErrorCallback">
+            <summary>
+            Invoked when an error is encountered.
+            </summary>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Util.P3Util.CombineCallback">
+            <summary>
+            Invoked to create a new vertex when the tessellation detects an intersection,
+            or wishes to merge features.
+            </summary>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.Util.Tesselator">
+            <summary>
+            <b>Tesselator</b> is a wrapper around the GLU tesselation methods used to tesselate
+            arbitrary flattened paths.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.tess">
+            <summary>
+            The tesselation object.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.visitor">
+            <summary>
+            The visitor object notified during a tesselation.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.beginCallback">
+            <summary>
+            Invoked to indicate the start of a (triangle) primitive.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.vertexCallback">
+            <summary>
+            Invoked between the begin and end callbacks to define the vertices of the triangles
+            created by the tessellation process.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.endCallback">
+            <summary>
+            Invoked to indicate the end of a primitive.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.errorCallback">
+            <summary>
+            Invoked when an error is encountered.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.combineCallback">
+            <summary>
+            Invoked to create a new vertex when the tessellation detects an intersection, or
+            wishes to merge features.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.handles">
+            <summary>
+            A collection of GCHandles used to pass objects the the GLU tesselation methods.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.#ctor">
+            <summary>
+            Constructs a new Tesselator object.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.Tesselate(System.Drawing.Drawing2D.GraphicsPath,UMD.HCIL.PiccoloDirect3D.Util.TesselationVisitor)">
+            <summary>
+            Tesselates the specified path, notifying the
+            <see cref="T:UMD.HCIL.PiccoloDirect3D.Util.TesselationVisitor">TesselationVisitor</see>
+            as each new triangle primitive is added.
+            </summary>
+            <param name="path">The path to tesselate.</param>
+            <param name="visitor">The tesselation visitor to notify.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.ClearHandles">
+            <summary>
+            Frees the list of GCHandles collected during tesselation.
+            </summary>
+            <remarks>
+            GCHandles are used so that objects passed to the GLU tesselation methods
+            won't get garbage collected during the tesselation process.  These handles
+            must be explicitly freed after the tesselation is completed.
+            </remarks>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.Dispose">
+            <summary>
+            Disposes the tesselation object.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.TessBegin(UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlPrimitiveType)">
+            <summary>
+            Notifies the <see cref="T:UMD.HCIL.PiccoloDirect3D.Util.TesselationVisitor">
+            TesselationVisitor</see> of the start of a (triangle) primitive.
+            </summary>
+            <param name="which">The type of the primitive.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.TessVertex(System.IntPtr)">
+            <summary>
+            Notifies the <see cref="T:UMD.HCIL.PiccoloDirect3D.Util.TesselationVisitor">
+            TesselationVisitor</see> of new vertices created by the tessellation process.
+            </summary>
+            <param name="data">A pointer to the vertex data.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.TessEnd">
+            <summary>
+            Notifies the <see cref="T:UMD.HCIL.PiccoloDirect3D.Util.TesselationVisitor">
+            TesselationVisitor</see> of the end of a primitive.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.TessError(UMD.HCIL.PiccoloDirect3D.Util.P3Util.GlTessError)">
+            <summary>
+            Notifies the <see cref="T:UMD.HCIL.PiccoloDirect3D.Util.TesselationVisitor">
+            TesselationVisitor</see> when an error is encountered.
+            </summary>
+            <param name="error">The type of error that occured.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.TessCombine(System.IntPtr,System.IntPtr,System.IntPtr,System.IntPtr@)">
+            <summary>
+            Creates a new vertex when the tessellation detects an intersection, or wishes
+            to merge features.
+            </summary>
+            <param name="coords">A pointer to the new vertex.</param>
+            <param name="data">A pointer to the four vertices that surround the new vertex.</param>
+            <param name="weight">
+            A pointer to an array of values that indicate how much influence the surrounding
+            vertices have on the newly created vertex.
+            </param>
+            <param name="dataOut">
+            A pointer to the representation of the new vertex that should be used in subsequent calls
+            to <see cref="M:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.TessVertex(System.IntPtr)">TessVertex</see>.
+            </param>
+            <remarks>
+            This method will result in subsequent call(s) to
+            <see cref="M:UMD.HCIL.PiccoloDirect3D.Util.Tesselator.TessVertex(System.IntPtr)">TessVertex</see>
+            where the data parameter will be the dataOut value set here.
+            </remarks>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.P3Camera">
+            <summary>
+            A camera that renders it's brush color using Direct3D.
+            </summary>
+            <remarks>
+            The reason this class extends PCamera rather than P3Node is to avoid duplicating
+            all of the camera code.
+            </remarks>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.P3Camera.vb">
+            <summary>
+            The vertex buffer that stores the vertices for this node.
+            </summary>
+        </member>
+        <member name="F:UMD.HCIL.PiccoloDirect3D.P3Camera.verticesInvalid">
+            <summary>
+            Indicates whether this node's cached vertices are invalid. 
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Camera.SetBounds(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.Piccolo.PNode.SetBounds(System.Single,System.Single,System.Single,System.Single)">PNode.SetBounds</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Camera.GetValidVertexBuffer(Microsoft.DirectX.Direct3D.Device)">
+            <summary>
+            Returns the vertex buffer, validating it if necessary.
+            </summary>
+            <remarks>
+            The vertex buffer is a cache of the node's vertices.  At any given time, the
+            cache could be invalid.  The vertex buffer should be accessed through this
+            method to ensure that it's contents are up to date.
+            </remarks>
+            <param name="device">The device associated with this node.</param>
+            <returns>A valid vertex buffer.</returns>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Camera.Dispose">
+            <summary>
+            Disposes the vertex buffer associated with this node.
+            </summary>
+            <remarks>
+            DirectX resources will be disposed automatically, but in a non-deterministic
+            fashion. Call this method to dispose a node's vertex buffer immediately.
+            </remarks>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Camera.OnResetDevice">
+            <summary>
+            Override this method to get notified when the device associated with this node
+            has been reset.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Camera.InvalidateVertices">
+            <summary>
+            Invalidate the node's cached vertices.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Camera.ValidateVertices(Microsoft.DirectX.Direct3D.Device)">
+            <summary>
+            Update this node's cached vertices.
+            </summary>
+            <remarks>
+            This method will get called before painting a node, if it's Direct3D vertices need
+            to be updated.  By default, this method will fill the vertex buffer.  To create a
+            camera that does not use P3Camera's default vertex buffer override this method and do
+            not call the base implmentation.  Instead you can update your custom vertices.
+            </remarks>
+            <param name="device">The device associated with this node.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Camera.OnVertexBufferCreated(System.Object,System.EventArgs)">
+            <summary>
+            Calls <see cref="M:UMD.HCIL.PiccoloDirect3D.P3Camera.FillVertexBuffer(Microsoft.DirectX.Direct3D.VertexBuffer)">P3Camera.FillVertexBuffer</see> whenever the
+            vertex buffer is recreated.
+            </summary>
+            <param name="sender">The source of the Created event.</param>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Camera.CreateVertexBuffer(Microsoft.DirectX.Direct3D.Device)">
+            <summary>
+            Override this method to create a custom vertex buffer.  Most nodes that extend P3Node
+            will need to override this method since their number and type of vertices will vary.
+            </summary>
+            <param name="device"></param>
+            <remarks>
+            It is not safe to call GetValidVertexBuffer() here, since that method may call
+            CreateVertexBuffer().
+            </remarks>
+            <returns>The new vertex buffer.</returns>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Camera.FillVertexBuffer(Microsoft.DirectX.Direct3D.VertexBuffer)">
+            <summary>
+            Override this method to fill the vertex buffer with the appropriate data.  Most nodes
+            that extend P3Node will need to override this method since their number and type of
+            vertices will vary.
+            </summary>
+            <remarks>
+            It is not safe to call GetValidVertexBuffer() here, since that method may call
+            FillVertexBuffer().
+            </remarks>
+            <param name="vb">The vertex buffer to fill.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Camera.Paint(UMD.HCIL.Piccolo.Util.PPaintContext)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.Piccolo.PCamera.Paint(UMD.HCIL.Piccolo.Util.PPaintContext)">PCamera.Paint</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Camera.PaintDebugBounds(UMD.HCIL.Piccolo.Util.PPaintContext,System.Drawing.Pen,System.Drawing.RectangleF)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.Piccolo.PCamera.PaintDebugBounds(UMD.HCIL.Piccolo.Util.PPaintContext,System.Drawing.Pen,System.Drawing.RectangleF)">PCamera.PaintDebugBounds</see>.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Camera.PaintDebugFullBounds(UMD.HCIL.Piccolo.Util.PPaintContext,System.Drawing.Brush,System.Drawing.RectangleF)">
+            <summary>
+            Overridden.  See <see cref="M:UMD.HCIL.Piccolo.PCamera.PaintDebugFullBounds(UMD.HCIL.Piccolo.Util.PPaintContext,System.Drawing.Brush,System.Drawing.RectangleF)">PaintDebugFullBounds</see>.
+            </summary>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.P3Camera.Brush">
+            <summary>
+            Overridden.  See <see cref="P:UMD.HCIL.Piccolo.PNode.Brush">PNode.Brush</see>.
+            </summary>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.P3Camera.VerticesInvalid">
+            <summary>
+            Gets or sets a value indicating whether this node's cached vertices are invalid.
+            </summary>
+            <value>True if this node node's cached vertices are invalid; else false;</value>
+            <remarks>
+            If this property is set to true, the node's cached vertices will be validated
+            at a later point. Note, this property is most often set internally.
+            </remarks>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.P3Canvas">
+            <summary>
+            A Direct3D canvas.  All nodes that implment D3DNode, should be added to a P3Canvas.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Canvas.#ctor">
+            <summary>
+            Constructs a new P3Canvas.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Canvas.CreateBasicScenegraph">
+            <summary>
+            Overridden.  Creates a PiccoloDirect3D scene graph.
+            </summary>
+            <returns>The main camera node in the new scene graph.</returns>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Canvas.CreatePaintContext(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Overridden.  Returns a P3PaintContext.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Canvas.PaintPiccolo(UMD.HCIL.Piccolo.Util.PPaintContext)">
+            <summary>
+            Overridden. Begins the Direct3D scene, paints Piccolo and ends the Direct3D scene.
+            </summary>
+            <param name="paintContext">The paint context to use for painting piccolo.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Canvas.CreateDevice">
+            <summary>
+            Override this method to modify how the device is created.
+            </summary>
+            <returns>The new device.</returns>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Canvas.OnResetDevice(System.Object,System.EventArgs)">
+            <summary>
+            Resets the render state of the device and notifies piccolo that the device
+            has been reset.
+            </summary>
+            <param name="sender">The source of the DeviceReset event.</param>
+            <param name="e">An EventArgs that stores the DeviceReset event data.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Canvas.SetupMatrices">
+            <summary>
+            Sets up the view and projection matrices.
+            </summary>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Canvas.FullResetDevice(UMD.HCIL.Piccolo.PNode)">
+            <summary>
+            Notifies all Direct3D nodes that the device has been reset.
+            </summary>
+            <param name="node">The node to notify.</param>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Canvas.OnResize(System.EventArgs)">
+            <summary>
+            Overridden.  See <see cref="M:System.Windows.Forms.Control.OnResize(System.EventArgs)">PCanvas.OnResize</see>.
+            </summary>
+        </member>
+        <member name="E:UMD.HCIL.PiccoloDirect3D.P3Canvas.DeviceReset">
+            <summary>
+            This event gets fired whenever the Direct3D device is reset (which happens on resize, 
+            display device properties change, wake from sleep, etc.).  PiccoloDirect3D takes care
+            of reallocating its D3D resources.  But, an application may want to listen to this event
+            if it keeps its own D3D resources.  Note Vertex and Index buffers will be reallocated
+            automatically, but you will need to refill them after they are created.  See P3Node for
+            an example.
+            </summary>
+        </member>
+        <member name="P:UMD.HCIL.PiccoloDirect3D.P3Canvas.Device">
+            <summary>
+            Gets or sets the device associates with this canvas.
+            </summary>
+            <value>The device assoicated with this canvas.</value>
+        </member>
+        <member name="T:UMD.HCIL.PiccoloDirect3D.P3Form">
+            <summary>
+            <b>P3Form</b> is meant to be subclassed by applications that just need a
+            <see cref="T:UMD.HCIL.PiccoloDirect3D.P3Canvas"/> in a <see cref="T:System.Windows.Forms.Form"/>.
+            </summary>
+            <remarks>
+            P3Form also provides full screen mode functionality.
+            <para>
+            <b>Notes to Inheritors:</b>  Subclasses should override the Initialize
+            method and start adding their own code there.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:UMD.HCIL.PiccoloDirect3D.P3Form.#ctor">
+            <summary>
+            Constructs a new P3Form.
+            </summary>
+        </member>
+    </members>
+</doc>

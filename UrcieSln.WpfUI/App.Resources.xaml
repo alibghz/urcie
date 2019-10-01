@@ -1,0 +1,358 @@
+﻿<ResourceDictionary 
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:sys="clr-namespace:System;assembly=mscorlib"
+	xmlns:views="clr-namespace:UrcieSln.WpfUI.Views"
+	xmlns:local="clr-namespace:UrcieSln.WpfUI">
+	<ControlTemplate x:Key="ScrollViewerControlTemplate" TargetType="{x:Type ScrollViewer}">
+		<Grid x:Name="Grid" Background="{TemplateBinding Background}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Rectangle x:Name="Corner" Grid.Column="1" Grid.Row="1" Fill="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+			<ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
+				CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" 
+				ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" 
+				Margin="{TemplateBinding Padding}" Grid.RowSpan="2" Grid.ColumnSpan="2" />
+			<ScrollBar x:Name="PART_VerticalScrollBar"
+						AutomationProperties.AutomationId="VerticalScrollBar"
+						Width="8"
+						Grid.Row="0"
+						Grid.Column="1"
+						Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+						Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Cursor="Arrow"
+						Value="{Binding VerticalOffset, Mode=OneWay,
+							RelativeSource={RelativeSource TemplatedParent}}" 
+							ViewportSize="{TemplateBinding ViewportHeight}" />
+			<ScrollBar x:Name="PART_HorizontalScrollBar" 
+						AutomationProperties.AutomationId="HorizontalScrollBar"
+						Cursor="Arrow"
+						Height="8"
+						Grid.Row="1"
+						Grid.Column="0" 
+						Maximum="{TemplateBinding ScrollableWidth}"
+						Minimum="0"
+						Orientation="Horizontal"
+						Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+						Value="{Binding HorizontalOffset, Mode=OneWay, 
+							RelativeSource={RelativeSource TemplatedParent}}"
+							ViewportSize="{TemplateBinding ViewportWidth}" />
+		</Grid>
+	</ControlTemplate>
+	<Style x:Key="ScrollBarPageButton" TargetType="{x:Type RepeatButton}">
+		<Setter Property="OverridesDefaultStyle" Value="true"/>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="Focusable" Value="false"/>
+		<Setter Property="IsTabStop" Value="false"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type RepeatButton}">
+					<Rectangle Fill="{TemplateBinding Background}" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}"/>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style x:Key="HorizontalThumb" TargetType="{x:Type Thumb}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Thumb}">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="4" />
+							<ColumnDefinition Width="4" />
+							<ColumnDefinition />
+							<ColumnDefinition Width="4" />
+							<ColumnDefinition Width="4" />
+						</Grid.ColumnDefinitions>
+						<Rectangle Grid.Column="0" Grid.ColumnSpan="2" Fill="LightGray" />
+						<Rectangle Grid.Column="1" Grid.ColumnSpan="3" Fill="LightGray" />
+						<Rectangle Grid.Column="3" Grid.ColumnSpan="2" Fill="LightGray" />
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style x:Key="VerticalThumb" TargetType="{x:Type Thumb}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Thumb}">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="4" />
+							<RowDefinition Height="4" />
+							<RowDefinition />
+							<RowDefinition Height="4" />
+							<RowDefinition Height="4" />
+						</Grid.RowDefinitions>
+						<Rectangle Grid.Row="0" Grid.RowSpan="2" Fill="LightGray" />
+						<Rectangle Grid.Row="1" Grid.RowSpan="3" Fill="LightGray" />
+						<Rectangle Grid.Row="3" Grid.RowSpan="2" Fill="LightGray" />
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style TargetType="{x:Type ScrollBar}">
+		<Setter Property="Stylus.IsPressAndHoldEnabled" Value="false"/>
+		<Setter Property="Stylus.IsFlicksEnabled" Value="false"/>
+		<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+		<Setter Property="Width" Value="10"/>
+		<Setter Property="MinWidth" Value="10"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type ScrollBar}">
+					<Grid x:Name="Bg" SnapsToDevicePixels="true" Background="WhiteSmoke">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="0.00001*"/>
+						</Grid.RowDefinitions>
+						<Track x:Name="PART_Track"
+							   IsDirectionReversed="true"
+							   IsEnabled="{TemplateBinding IsMouseOver}"
+							   Grid.Row="1">
+							<Track.DecreaseRepeatButton>
+								<RepeatButton 
+									Command="{x:Static ScrollBar.PageUpCommand}" 
+									Style="{StaticResource ScrollBarPageButton}"/>
+							</Track.DecreaseRepeatButton>
+							<Track.IncreaseRepeatButton>
+								<RepeatButton
+									Command="{x:Static ScrollBar.PageDownCommand}"
+									Style="{StaticResource ScrollBarPageButton}"/>
+							</Track.IncreaseRepeatButton>
+							<Track.Thumb>
+								<Thumb Style="{DynamicResource VerticalThumb}" Width="8"/>
+							</Track.Thumb>
+						</Track>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+		<Style.Triggers>
+			<Trigger Property="Orientation" Value="Horizontal">
+				<Setter Property="Width" Value="Auto"/>
+				<Setter Property="MinWidth" Value="0"/>
+				<Setter Property="Height" Value="10"/>
+				<Setter Property="MinHeight" Value="10"/>
+				<Setter Property="Template">
+					<Setter.Value>
+						<ControlTemplate TargetType="{x:Type ScrollBar}">
+							<Grid x:Name="Bg" SnapsToDevicePixels="true" Background="WhiteSmoke">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="0.00001*"/>
+								</Grid.ColumnDefinitions>
+								<Track x:Name="PART_Track" Grid.Column="1" IsEnabled="{TemplateBinding IsMouseOver}">
+									<Track.DecreaseRepeatButton>
+										<RepeatButton
+											Command="{x:Static ScrollBar.PageLeftCommand}"
+											Style="{StaticResource ScrollBarPageButton}"/>
+									</Track.DecreaseRepeatButton>
+									<Track.IncreaseRepeatButton>
+										<RepeatButton 
+											Command="{x:Static ScrollBar.PageRightCommand}" 
+											Style="{StaticResource ScrollBarPageButton}"/>
+									</Track.IncreaseRepeatButton>
+									<Track.Thumb>
+										<Thumb Style="{DynamicResource HorizontalThumb}" Height="8"/>
+									</Track.Thumb>
+								</Track>
+							</Grid>
+						</ControlTemplate>
+					</Setter.Value>
+				</Setter>
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+	<Thickness x:Key="ExpanderMarginBase" Left="0" Top="0" Right="0" Bottom="0"/>
+	<Thickness x:Key="ExpanderPaddingBase" Left="2" Top="2" Right="2" Bottom="0" />
+	<LinearGradientBrush x:Key="LightAquaGradient" EndPoint="0.5,1" StartPoint="0.5,0">
+		<GradientStop Color="#FFF4F9FF" Offset="0" />
+		<GradientStop Color="#FFDFECFB" Offset="1" />
+	</LinearGradientBrush>
+	<SolidColorBrush x:Key="LightAquaBorderBrush" Color="#FFB4D7FF" />
+	<SolidColorBrush x:Key="TabPanelBackground" Color="AliceBlue" />
+	<SolidColorBrush x:Key="TabPanelBorderBrush" Color="#FFDFECFB" />
+	<Thickness x:Key="TabControlBorderThickness" Left="0" Top="0" Right="0" Bottom="0" />
+	<Thickness x:Key="TabPanelBorderThickness" Left="0" Top="0" Right="0" Bottom="3" />
+	<!-- TabItem Foreground -->
+	<SolidColorBrush x:Key="TabItemForegroundBase" Color="Gray" />
+	<SolidColorBrush x:Key="TabItemForegroundHover" Color="Gray" />
+	<SolidColorBrush x:Key="TabItemForegroundSelected" Color="Black" />
+	<!-- TabItem Foreground -->
+	<!-- TabItem Background -->
+	<SolidColorBrush x:Key="TabItemBackgroundBase" Color="#FFF4F9FF" />
+	<SolidColorBrush x:Key="TabItemBackgroundHover" Color="#FFF4F9FF" />
+	<!-- TabItem Background -->
+	<!-- TabItem Border Brush -->
+	<SolidColorBrush x:Key="TabItemBorderBrushBase" Color="#FFB4D7FF" />
+	<SolidColorBrush x:Key="TabItemBorderBrushHover" Color="#FFB4D7FF" />
+	<SolidColorBrush x:Key="TabItemBorderBrushSelected" Color="#FFB4D7FF" />
+	<!-- TabItem Border Brush -->
+	<!-- TabItem Margin -->
+	<Thickness x:Key="TabItemMarginBase" Left="0" Top="5" Right="-1" Bottom="0" />
+	<Thickness x:Key="TabItemMarginHover" Left="0" Top="5" Right="-1" Bottom="0" />
+	<Thickness x:Key="TabItemMarginSelected" Left="0" Top="2" Right="-1" Bottom="0" />
+	<!-- TabItem Margin -->
+	<!-- TabItem Content Margin -->
+	<Thickness x:Key="TabItemContentMarginBase" Left="10" Top="2" Right="10" Bottom="2" />
+	<Thickness x:Key="TabItemContentMarginHover" Left="10" Top="2" Right="10" Bottom="2" />
+	<Thickness x:Key="TabItemContentMarginSelected" Left="10" Top="2" Right="10" Bottom="2" />
+	<!-- TabItem Content Margin -->
+	<!-- TabItem Border Thickness -->
+	<Thickness x:Key="TabItemBorderThicknessBase" Left="1" Top="3" Right="1" Bottom="0" />
+	<Thickness x:Key="TabItemBorderThicknessHover" Left="1" Top="3" Right="1" Bottom="0" />
+	<Thickness x:Key="TabItemBorderThicknessSelected" Left="1" Top="3" Right="1" Bottom="0" />
+	<Geometry x:Key="X_CloseButton">M0,0 L10,10 M0,10 L10,0</Geometry>
+	<!-- TabItem Border Thickness -->
+	<Style TargetType="{x:Type TabControl}">
+		<Setter Property="SnapsToDevicePixels" Value="True" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="TabControl">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="*" />
+						</Grid.RowDefinitions>
+						<Border Height="32"
+									Background="{StaticResource TabPanelBackground}"
+									BorderBrush="{StaticResource TabPanelBorderBrush}"
+									BorderThickness="{StaticResource TabPanelBorderThickness}"
+									Padding="5,0">
+							<TabPanel IsItemsHost="True" />
+						</Border>
+						<Border BorderThickness="{StaticResource TabControlBorderThickness}"
+								Grid.Row="1" BorderBrush="Gray">
+							<ContentPresenter ContentSource="SelectedContent" />
+						</Border>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style x:Key="TabItemCloseButtonStyle" TargetType="{x:Type Button}">
+		<Setter Property="SnapsToDevicePixels" Value="True"/>
+		<Setter Property="Width" Value="12" />
+		<Setter Property="Height" Value="12" />
+		<Setter Property="Cursor" Value="Hand" />
+		<Setter Property="Focusable" Value="False" />
+		<Setter Property="OverridesDefaultStyle" Value="True" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Button}">
+					<Border x:Name="ButtonBorder" Background="#FF85C2D8" BorderThickness="0">
+						<Grid>
+							<Path x:Name="ButtonPath" Margin="2" Stroke="White" StrokeThickness="2"
+									StrokeStartLineCap="Square" StrokeEndLineCap="Square" Stretch="Uniform"
+									VerticalAlignment="Center" HorizontalAlignment="Center"
+									Data="{StaticResource X_CloseButton}" />
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Grid>
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="ButtonBorder" Property="Background" Value="#FFD11D1D" />
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter Property="Visibility" Value="Collapsed" />
+						</Trigger>
+						<Trigger Property="IsPressed" Value="true">
+							<Setter TargetName="ButtonBorder" Property="Background" Value="#FF5AA3D6" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style TargetType="{x:Type TabItem}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type TabItem}">
+					<Grid Height="30" VerticalAlignment="Bottom">
+						<Border Name="Border" 
+									Background="{StaticResource TabItemBackgroundBase}"
+									BorderThickness="{StaticResource TabItemBorderThicknessBase}"
+									Margin="{StaticResource TabItemMarginBase}">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition />
+									<ColumnDefinition />
+								</Grid.ColumnDefinitions>
+								<ContentPresenter x:Name="ContentSite"
+										Margin="{StaticResource TabItemContentMarginBase}"
+										VerticalAlignment="Center" HorizontalAlignment="Center"
+										ContentSource="Header" RecognizesAccessKey="True" />
+								<Button x:Name="cmdTabItemCloseButton"
+										Style="{StaticResource TabItemCloseButtonStyle}"
+										Command="{Binding Path=CloseCommand}"
+										CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}}"
+										Grid.Column="1"
+										Margin="-7,5,7,5"/>
+							</Grid>
+						</Border>
+					</Grid>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsSelected" Value="False">
+							<Setter Property="Panel.ZIndex" Value="90" />
+							<Setter Property="Foreground" Value="{StaticResource TabItemForegroundBase}" />
+							<Setter TargetName="Border" Property="Background" Value="{StaticResource TabItemBackgroundBase}" />
+							<Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource TabItemBorderBrushBase}" />
+							<Setter TargetName="Border" Property="BorderThickness" Value="{StaticResource TabItemBorderThicknessBase}" />
+							<Setter TargetName="Border" Property="Margin" Value="{StaticResource TabItemMarginBase}" />
+						</Trigger>
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="Border.IsMouseOver" Value="True" />
+								<Condition Property="IsSelected" Value="False" />
+							</MultiTrigger.Conditions>
+							<Setter Property="Panel.ZIndex" Value="99" />
+							<Setter Property="Foreground" Value="{StaticResource TabItemForegroundHover}" />
+							<Setter TargetName="Border" Property="Background" Value="{StaticResource TabItemBackgroundHover}" />
+							<Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource TabItemBorderBrushHover}" />
+							<Setter TargetName="Border" Property="BorderThickness" Value="{StaticResource TabItemBorderThicknessHover}" />
+							<Setter TargetName="Border" Property="Margin" Value="{StaticResource TabItemMarginHover}" />
+						</MultiTrigger>
+						<Trigger Property="IsSelected" Value="True">
+							<Setter Property="Panel.ZIndex" Value="100" />
+							<Setter Property="Foreground" Value="{StaticResource TabItemForegroundSelected}" />
+							<Setter TargetName="Border" Property="Background" Value="{StaticResource LightAquaGradient}" />
+							<Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource TabItemBorderBrushSelected}" />
+							<Setter TargetName="Border" Property="BorderThickness" Value="{StaticResource TabItemBorderThicknessSelected}" />
+							<Setter TargetName="Border" Property="Margin" Value="{StaticResource TabItemMarginSelected}" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style x:Key="VerticalGridSplitterStyle" TargetType="GridSplitter">
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
+		<Setter Property="Background" Value="{StaticResource TabPanelBorderBrush}" />
+	</Style>
+	<Style x:Key="HorizontalGridSplitterStyle" TargetType="GridSplitter">
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
+		<Setter Property="ShowsPreview" Value="True" />
+		<Setter Property="Background" Value="{StaticResource TabPanelBorderBrush}" />
+	</Style>
+	<ControlTemplate x:Key="validationTemplate">
+		<DockPanel>
+			<Image Source="/Resources/Icons/Mini/error.png" Margin="3,0,2,0" Width="16" />
+			<AdornedElementPlaceholder/>
+		</DockPanel>
+	</ControlTemplate>
+	<Style x:Key="masterDetailTextBoxStyle" TargetType="{x:Type TextBox}">
+		<Setter Property="Margin" Value="2,2,3,2" />
+		<Setter Property="HorizontalAlignment" Value="Right" />
+		<Setter Property="Width" Value="140" />
+		<Style.Triggers>
+			<Trigger Property="Validation.HasError" Value="true">
+				<Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}" />
+				<Setter Property="BorderBrush" Value="#FFBF1F1F" />
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+</ResourceDictionary>

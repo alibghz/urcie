@@ -1,0 +1,507 @@
+﻿<UserControl x:Class="UrcieSln.WpfUI.Views.UnitView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:System="clr-namespace:System;assembly=mscorlib"
+			 xmlns:domain="clr-namespace:UrcieSln.Domain;assembly=UrcieSln.Domain"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024"
+			 Loaded="UserControl_Loaded">
+	<UserControl.Resources></UserControl.Resources>
+	<Grid Background="White">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="600*" />
+			<ColumnDefinition Width="4" />
+			<ColumnDefinition Width="200*" />
+		</Grid.ColumnDefinitions>
+		<Border Grid.Row="0" Grid.ColumnSpan="3" BorderBrush="#FFA3D5E0" BorderThickness="0,1,0,1" Padding="0,1,0,1">
+			<ToolBarTray>
+				<ToolBar Margin="0" HorizontalAlignment="Left">
+					<Button Name="SaveToolBtn" ToolTip="Save (Ctrl+S)" BorderThickness="0" Click="SaveToolBtn_Click" 
+							IsEnabled="{Binding SaveToolEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=UserControl}}">
+						<Button.Style>
+							<Style TargetType="Button">
+								<Style.Triggers>
+									<Trigger Property="IsEnabled" Value="False">
+										<Setter Property="Button.Content">
+											<Setter.Value>
+												<Image Source="/Resources/Icons/Mini/save.png" Width="16" Opacity="0.3" />
+											</Setter.Value>
+										</Setter>
+									</Trigger>
+									<Trigger Property="IsEnabled" Value="True">
+										<Setter Property="Button.Content">
+											<Setter.Value>
+												<Image Source="/Resources/Icons/Mini/save.png" Width="16" Opacity="0.8" />
+											</Setter.Value>
+										</Setter>
+									</Trigger>
+								</Style.Triggers>
+							</Style>
+						</Button.Style>
+					</Button>
+					<Button ToolTip="Refresh (Ctrl+R)" Name="RefreshButton" Click="RefreshButton_Click" BorderThickness="0">
+						<Button.Style>
+							<Style TargetType="Button">
+								<Style.Triggers>
+									<Trigger Property="IsEnabled" Value="False">
+										<Setter Property="Button.Content">
+											<Setter.Value>
+												<Image Source="/Resources/Icons/Mini/refresh.png" Width="16" Opacity="0.3" />
+											</Setter.Value>
+										</Setter>
+									</Trigger>
+									<Trigger Property="IsEnabled" Value="True">
+										<Setter Property="Button.Content">
+											<Setter.Value>
+												<Image Source="/Resources/Icons/Mini/refresh.png" Width="16" Opacity="0.8" />
+											</Setter.Value>
+										</Setter>
+									</Trigger>
+								</Style.Triggers>
+							</Style>
+						</Button.Style>
+					</Button>
+					<Separator />
+					<ToggleButton Name="SelectToolBtn" Click="SelectToolBtn_Click" Margin="0,0,2,0" ToolTip="Select (Ctrl+T)" BorderThickness="0">
+						<ToggleButton.Style>
+							<Style TargetType="ToggleButton">
+								<Style.Triggers>
+									<Trigger Property="IsEnabled" Value="False">
+										<Setter Property="Button.Content">
+											<Setter.Value>
+												<Image Source="/Resources/Icons/Mini/cursor-mini.png" Width="16" Opacity="0.3" />
+											</Setter.Value>
+										</Setter>
+									</Trigger>
+									<Trigger Property="IsEnabled" Value="True">
+										<Setter Property="Button.Content">
+											<Setter.Value>
+												<Image Source="/Resources/Icons/Mini/cursor-mini.png" Width="16" Opacity="0.8" />
+											</Setter.Value>
+										</Setter>
+									</Trigger>
+								</Style.Triggers>
+							</Style>
+						</ToggleButton.Style>
+					</ToggleButton>
+					<ToggleButton Name="PanToolBtn" Click="PanToolBtn_Click" Margin="0,0,2,0" ToolTip="Pan (Ctrl+P)" BorderThickness="0">
+						<ToggleButton.Style>
+							<Style TargetType="ToggleButton">
+								<Style.Triggers>
+									<Trigger Property="IsEnabled" Value="False">
+										<Setter Property="Button.Content">
+											<Setter.Value>
+												<Image Source="/Resources/Icons/Mini/hand_cursor.png" Width="16" Opacity="0.3" />
+											</Setter.Value>
+										</Setter>
+									</Trigger>
+									<Trigger Property="IsEnabled" Value="True">
+										<Setter Property="Button.Content">
+											<Setter.Value>
+												<Image Source="/Resources/Icons/Mini/hand_cursor.png" Width="16" Opacity="0.8" />
+											</Setter.Value>
+										</Setter>
+									</Trigger>
+								</Style.Triggers>
+							</Style>
+						</ToggleButton.Style>
+					</ToggleButton>
+					<Separator />
+					<ToggleButton Name="MullionToolBtn" Click="MullionToolBtn_Click" Margin="0,0,2,0" ToolTip="Mullion (Ctrl+M)" BorderThickness="0">
+						<ToggleButton.Style>
+							<Style TargetType="ToggleButton">
+								<Style.Triggers>
+									<Trigger Property="IsEnabled" Value="False">
+										<Setter Property="Button.Content">
+											<Setter.Value>
+												<Image Source="/Resources/Icons/Mini/mullion.png" Width="16" Opacity="0.3" />
+											</Setter.Value>
+										</Setter>
+									</Trigger>
+									<Trigger Property="IsEnabled" Value="True">
+										<Setter Property="Button.Content">
+											<Setter.Value>
+												<Image Source="/Resources/Icons/Mini/mullion.png" Width="16" Opacity="0.8" />
+											</Setter.Value>
+										</Setter>
+									</Trigger>
+								</Style.Triggers>
+							</Style>
+						</ToggleButton.Style>
+					</ToggleButton>
+					<ToggleButton Name="SashToolBtn" Click="SashToolBtn_Click" Margin="0,0,2,0" ToolTip="Sash (Ctrl+H)" BorderThickness="0">
+						<ToggleButton.Style>
+							<Style TargetType="ToggleButton">
+								<Style.Triggers>
+									<Trigger Property="IsEnabled" Value="False">
+										<Setter Property="Button.Content">
+											<Setter.Value>
+												<Image Source="/Resources/Icons/Mini/sash.png" Width="16" Opacity="0.3" />
+											</Setter.Value>
+										</Setter>
+									</Trigger>
+									<Trigger Property="IsEnabled" Value="True">
+										<Setter Property="Button.Content">
+											<Setter.Value>
+												<Image Source="/Resources/Icons/Mini/sash.png" Width="16" Opacity="0.8" />
+											</Setter.Value>
+										</Setter>
+									</Trigger>
+								</Style.Triggers>
+							</Style>
+						</ToggleButton.Style>
+					</ToggleButton>
+					<ToggleButton Name="FillingToolBtn" Click="FillingToolBtn_Click" Margin="0,0,2,0" ToolTip="Filling (Ctrl+F)" BorderThickness="0">
+						<ToggleButton.Style>
+							<Style TargetType="ToggleButton">
+								<Style.Triggers>
+									<Trigger Property="IsEnabled" Value="False">
+										<Setter Property="Button.Content">
+											<Setter.Value>
+												<Image Source="/Resources/Icons/Mini/board.png" Width="16" Opacity="0.3" />
+											</Setter.Value>
+										</Setter>
+									</Trigger>
+									<Trigger Property="IsEnabled" Value="True">
+										<Setter Property="Button.Content">
+											<Setter.Value>
+												<Image Source="/Resources/Icons/Mini/board.png" Width="16" Opacity="0.8" />
+											</Setter.Value>
+										</Setter>
+									</Trigger>
+								</Style.Triggers>
+							</Style>
+						</ToggleButton.Style>
+					</ToggleButton>
+					<Separator />
+					<StackPanel Orientation="Horizontal">
+						<CheckBox x:Name="FitToScreen" Click="FitToScreen_Click" Content="Fit Screen" Margin="2,4,5,2" />
+						<Button Name="CenterScreen" ToolTip="Center Screen" BorderThickness="0" SnapsToDevicePixels="True" Click="CenterScreen_Click" Background="Transparent">
+							<Image Width="15" Source="/Resources/Icons/Mini/center.png" SnapsToDevicePixels="True" />
+						</Button>
+						<Slider ToolTip="Zoom" Name="zoomSlider" Width="80" Minimum="20" Value="100" Margin="2,2,0,2"
+								Maximum="200" SnapsToDevicePixels="True" ValueChanged="zoomSlider_ValueChanged" />
+						<TextBlock Name="zoomLabel" Text="100%" Margin="2,3,2,2" FontSize="11" />
+						<Image Source="/Resources/Icons/Mini/zoom.png" Margin="2,2,0,2" Opacity="0.8" Width="13" />
+						<Separator />
+						<TextBlock Text="Font size:" Margin="5,2,5,2" />
+						<ComboBox Name="FrameFontSize" MinWidth="40" SelectedIndex="0" SelectionChanged="ComboBox_SelectionChanged"
+								  ItemsSource="{Binding FontSizes, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1,AncestorType=UserControl}}" />
+						<CheckBox Name="ShowCodesCheckBox" Click="ShowCodesCheckBox_Click"
+								  Content="Show Codes" Margin="8,3,2,0" />
+					</StackPanel>
+				</ToolBar>
+			</ToolBarTray>
+		</Border>
+		<Grid Grid.Row="1" Grid.Column="0" x:Name="CanvasGrid"></Grid>
+		<GridSplitter Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Style="{StaticResource VerticalGridSplitterStyle}" />
+		<Border x:Name="sideBar" Grid.Row="1" Grid.Column="3" Grid.RowSpan="2" Margin="0">
+			<Border.Background>
+				<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+					<GradientStop Color="AliceBlue" Offset="1"/>
+					<GradientStop Color="White" Offset="0"/>
+				</LinearGradientBrush>
+			</Border.Background>
+			<Border.Resources>
+				<Style TargetType="TextBlock">
+					<Setter Property="Margin" Value="5,2,5,2" />
+					<Setter Property="HorizontalAlignment" Value="Right" />
+				</Style>
+				<Style TargetType="TextBox">
+					<Setter Property="Margin" Value="5,2,5,2" />
+					<Setter Property="HorizontalAlignment" Value="Stretch" />
+				</Style>
+				<Style TargetType="ComboBox">
+					<Setter Property="Margin" Value="5,2,5,2" />
+					<Setter Property="HorizontalAlignment" Value="Stretch" />
+				</Style>
+			</Border.Resources>
+			<ScrollViewer ScrollViewer.CanContentScroll="True">
+				<StackPanel>
+					<Border Margin="2" SnapsToDevicePixels="True" BorderThickness="1" BorderBrush="#FF73B5C3">
+						<Border.Background>
+							<LinearGradientBrush EndPoint="0,30" MappingMode="Absolute">
+								<GradientStop Color="#FFC7E1FF" Offset="0"/>
+								<GradientStop Color="White" Offset="1"/>
+							</LinearGradientBrush>
+						</Border.Background>
+						<Expander Header="Unit Details" Margin="{StaticResource ExpanderMarginBase}" Padding="{StaticResource ExpanderPaddingBase}" IsExpanded="True">
+							<Border Margin="-2,0" Padding="5" Background="White">
+								<Grid>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+									</Grid.RowDefinitions>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="100" />
+										<ColumnDefinition Width="*" />
+									</Grid.ColumnDefinitions>
+									<TextBlock Grid.Row="0" Text="Width:" Margin="0,2,5,2" />
+									<TextBlock Grid.Row="1" Text="Height:" Margin="0,2,5,2" />
+									<TextBlock Grid.Row="2" Text="Code:" Margin="0,2,5,2" />
+									<TextBlock Grid.Row="3" Text="Quantity:" Margin="0,2,5,2" />
+									<TextBlock Grid.Row="4" Text="Description:" Margin="0,2,5,2" />
+									<TextBlock Grid.Row="5" Text="Profile L:" Margin="0,2,5,2" />
+									<TextBlock Grid.Row="6" Text="Profile U:" Margin="0,2,5,2" />
+									<TextBlock Grid.Row="7" Text="Mullion Type:" Margin="0,2,5,2" />
+									<TextBlock Grid.Row="9" Text="Middle Point:"  Margin="0,2,5,2" />
+									<TextBlock Grid.Row="10" Text="Sash Type:" Margin="0,2,5,2" />
+									<TextBlock Grid.Row="11" Text="Direction:" Margin="0,2,5,2" />
+									<TextBlock Grid.Row="13" Text="Filling Type:"  Margin="0,2,5,2" />
+									<TextBlock Grid.Row="14" Text="I Profile Type:"  Margin="0,2,5,2" />
+									<TextBlock Grid.Row="15" Text=""  Margin="0,2,5,2" />
+									<TextBox Grid.Row="0" Grid.Column="1" Text="{Binding UnitWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=UserControl}}"/>
+									<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding UnitHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=UserControl}}"/>
+									<TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Code}" />
+									<TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Quantity}" />
+									<TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Description}" />
+									<ComboBox Grid.Row="5" Grid.Column="1" 
+										ItemsSource="{Binding ProfileTypes, RelativeSource={RelativeSource Mode=FindAncestor,
+										AncestorLevel=1, AncestorType=UserControl}}"
+										Name="LProfileComboBox" SelectionChanged="LProfileComboBox_SelectionChanged"
+										IsEnabled="{Binding FrameSelected, RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=1,AncestorType=UserControl}}"/>
+									<ComboBox Grid.Row="6" Grid.Column="1"
+										ItemsSource="{Binding ProfileTypes, RelativeSource={RelativeSource Mode=FindAncestor,
+										AncestorLevel=1, AncestorType=UserControl}}"
+										Name="UProfileComboBox" SelectionChanged="UProfileCombBox_SelectionChanged"
+										IsEnabled="{Binding FrameSelected, RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=1,AncestorType=UserControl}}"/>
+									<ComboBox Grid.Row="7" Grid.Column="1"
+										Name="SelectedMullionType"
+										SelectionChanged="SelectedMullionType_SelectionChanged"
+										ItemsSource="{Binding MullionTypes, Mode=OneWay, RelativeSource={RelativeSource AncestorLevel=1, AncestorType=UserControl, Mode=FindAncestor}}"
+										IsEnabled="{Binding MullionSelected, Mode=OneWay, RelativeSource={RelativeSource AncestorLevel=1, AncestorType=UserControl, Mode=FindAncestor}}" />
+									<CheckBox Name="VirtualMullion" Content="Virtual" Grid.Row="8" Click="VirtualMullion_Click"
+											  IsEnabled="{Binding MullionSelected , Mode=OneWay, RelativeSource={RelativeSource AncestorLevel=1, AncestorType=UserControl, Mode=FindAncestor}}"
+											  Grid.Column="1" Margin="5"  />
+									<Grid Grid.Row="9" Grid.Column="1">
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="*" />
+											<ColumnDefinition Width="22" />
+											<ColumnDefinition Width="25" />
+										</Grid.ColumnDefinitions>
+										<TextBox x:Name="MiddlePointTextBox" IsEnabled="False" Grid.Column="0" HorizontalAlignment="Stretch" KeyUp="MiddlePointTextBox_KeyUp" Text="{Binding MullionMiddlePoint, RelativeSource={RelativeSource AncestorLevel=1, AncestorType=UserControl, Mode=FindAncestor}}" />
+										<Button x:Name="DeacreaseMiddlePoint" IsEnabled="False" Grid.Column="1" Margin="0,2,2,2" Click="DeacreaseMiddlePoint_Click">
+											<Image Source="/Resources/Icons/Mini/minus.png" Width="16" />
+										</Button>
+										<Button x:Name="IncreaseMiddlePoint" IsEnabled="False" Grid.Column="2" Margin="0,2,5,2" Click="IncreaseMiddlePoint_Click">
+											<Image Source="/Resources/Icons/Mini/add.png" Width="16" />
+										</Button>
+									</Grid>
+									<ComboBox Grid.Row="10" Grid.Column="1"
+										Name="SelectedSashType"
+										SelectionChanged="SelectedSashType_SelectionChanged"
+										ItemsSource="{Binding SashTypes, Mode=OneWay, RelativeSource={RelativeSource AncestorLevel=1, AncestorType=UserControl, Mode=FindAncestor}}"
+										SelectedValuePath="Content"
+										IsEnabled="{Binding SashSelected , Mode=OneWay, RelativeSource={RelativeSource AncestorLevel=1, AncestorType=UserControl, Mode=FindAncestor}}" />
+									<ComboBox Grid.Row="11" Grid.Column="1"
+										Name="SelectedSashDirectionComboBox" SelectedValuePath="Content"
+										IsEnabled="{Binding SashSelected , Mode=OneWay, RelativeSource={RelativeSource AncestorLevel=1, AncestorType=UserControl, Mode=FindAncestor}}"
+										SelectionChanged="SelectedSashDirectionComboBox_SelectionChanged">
+										<ComboBoxItem>Fixed</ComboBoxItem>
+										<ComboBoxItem>Top</ComboBoxItem>
+										<ComboBoxItem>Right</ComboBoxItem>
+										<ComboBoxItem>Left</ComboBoxItem>
+										<ComboBoxItem>Bottom</ComboBoxItem>
+									</ComboBox>
+									<CheckBox x:Name="SashFixedCheckBox" Content="Fixed" 
+											  IsEnabled="{Binding SashSelected , Mode=OneWay, RelativeSource={RelativeSource AncestorLevel=1, AncestorType=UserControl, Mode=FindAncestor}}"
+											  Click="SashFixedCheckBox_Click" Grid.Row="12" Grid.Column="1" Margin="5"/>
+									<ComboBox Grid.Row="13" Grid.Column="1"
+										Name="SelectedFillingType" SelectionChanged="SelectedFillingType_SelectionChanged"
+										ItemsSource="{Binding FillingTypes, Mode=OneWay, RelativeSource={RelativeSource AncestorLevel=1, AncestorType=UserControl, Mode=FindAncestor}}"
+										IsEnabled="{Binding FillingSelected, Mode=OneWay, RelativeSource={RelativeSource AncestorLevel=1, AncestorType=UserControl, Mode=FindAncestor}}" />
+                                    <ComboBox Grid.Row="14" Grid.Column="1"
+										Name="SelectedIProfileType" SelectionChanged="SelectedIProfileType_SelectionChanged"
+										ItemsSource="{Binding ProfileTypes, Mode=OneWay, RelativeSource={RelativeSource AncestorLevel=1, AncestorType=UserControl, Mode=FindAncestor}}"
+										IsEnabled="{Binding FillingSelected, Mode=OneWay, RelativeSource={RelativeSource AncestorLevel=1, AncestorType=UserControl, Mode=FindAncestor}}" />
+                                    <CheckBox x:Name="SelectedIncludeIProfileTypeCheckBox" Content="Include I Profile" 
+											  IsEnabled="{Binding FillingSelected , Mode=OneWay, RelativeSource={RelativeSource AncestorLevel=1, AncestorType=UserControl, Mode=FindAncestor}}"
+											  Click="SelectedIncludeIProfileTypeCheckBox_Click" Grid.Row="15" Grid.Column="1" Margin="5"/>
+                                </Grid>
+							</Border>
+						</Expander>
+					</Border>
+					<Border Margin="2" SnapsToDevicePixels="True" BorderThickness="1" BorderBrush="#FF73B5C3">
+						<Border.Background>
+							<LinearGradientBrush EndPoint="0,30" MappingMode="Absolute">
+								<GradientStop Color="#FFC7E1FF" Offset="0"/>
+								<GradientStop Color="White" Offset="1"/>
+							</LinearGradientBrush>
+						</Border.Background>
+						<Expander Header="Accessories" IsExpanded="False" Margin="{StaticResource ExpanderMarginBase}" Padding="{StaticResource ExpanderPaddingBase}">
+							<Border Margin="-2,0" Padding="5" Background="White">
+								<Grid>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="20" />
+										<RowDefinition Height="200" />
+									</Grid.RowDefinitions>
+									<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="0">
+										<Button x:Name="editAccessories" Width="16" Height="16"
+												Click="editAccessories_Click" Margin="0,0,0,4">
+											<Image Source="/Resources/Icons/Mini/edit.png" Width="13" />
+										</Button>
+									</StackPanel>
+									<Border BorderThickness="1" BorderBrush="LightGray" Grid.Row="1">
+										<ListView Grid.Row="2" BorderThickness="0" ItemsSource="{Binding Accessories}">
+											<ListView.View>
+												<GridView AllowsColumnReorder="True">
+													<GridViewColumn DisplayMemberBinding="{Binding Path=AccessoryType.Name}" Header="Name" Width="70" />
+													<GridViewColumn DisplayMemberBinding="{Binding Path=Quantity}" Header="Quantity" Width="50" />
+													<GridViewColumn DisplayMemberBinding="{Binding Path=Unit}" Header="Unit" Width="40" />
+												</GridView>
+											</ListView.View>
+										</ListView>
+									</Border>
+								</Grid>
+							</Border>
+						</Expander>
+					</Border>
+					<Border Margin="2" SnapsToDevicePixels="True" BorderThickness="1" BorderBrush="#FF73B5C3">
+						<Border.Background>
+							<LinearGradientBrush EndPoint="0,30" MappingMode="Absolute">
+								<GradientStop Color="#FFC7E1FF" Offset="0"/>
+								<GradientStop Color="White" Offset="1"/>
+							</LinearGradientBrush>
+						</Border.Background>
+						<Expander Header="Mullion" IsExpanded="False" Margin="{StaticResource ExpanderMarginBase}" Padding="{StaticResource ExpanderPaddingBase}">
+							<Border Margin="-2,0" Padding="5" Background="White">
+								<Grid>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+									</Grid.RowDefinitions>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="100" />
+										<ColumnDefinition Width="*" />
+									</Grid.ColumnDefinitions>
+									<TextBlock Text="Mullion Type:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2,5,2" />
+									<ComboBox Name="MullionType"
+												ItemsSource="{Binding MullionTypes, RelativeSource={RelativeSource AncestorLevel=1, AncestorType=UserControl}}"
+												SelectionChanged="MullionType_SelectionChanged"
+												SelectedIndex="0"
+												IsEnabled="{Binding MullionToolActive, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=UserControl}}"
+												Grid.Row="0"
+												Grid.Column="1" HorizontalAlignment="Stretch" Margin="5,2,5,2" />
+									<StackPanel Grid.Row="1" Grid.Column="1" Margin="5,2,5,2" >
+										<RadioButton Name="VerticalMullionRadioBtn"
+												ToolTip="Vertical Mullion (V)"
+												IsEnabled="{Binding MullionToolActive, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=UserControl}}"
+												IsChecked="{Binding VerticalMullionChecked, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=UserControl}}"
+												Content="Vertical" Margin="0,5,0,3" />
+										<RadioButton Name="HorizontalMullionRadioBtn"
+												ToolTip="Horizontal Mullion (H)"
+												IsEnabled="{Binding MullionToolActive, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=UserControl}}"
+												IsChecked="{Binding HorizontalMullionChecked, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=UserControl}}"
+												Content="Horizontal" />
+									</StackPanel>
+								</Grid>
+							</Border>
+						</Expander>
+					</Border>
+					<Border Margin="2" SnapsToDevicePixels="True" BorderThickness="1" BorderBrush="#FF73B5C3">
+						<Border.Background>
+							<LinearGradientBrush EndPoint="0,30" MappingMode="Absolute">
+								<GradientStop Color="#FFC7E1FF" Offset="0"/>
+								<GradientStop Color="White" Offset="1"/>
+							</LinearGradientBrush>
+						</Border.Background>
+						<Expander Header="Sash" Margin="{StaticResource ExpanderMarginBase}" Padding="{StaticResource ExpanderPaddingBase}" IsExpanded="False">
+							<Border Margin="-2,0" Padding="5" Background="White">
+								<Grid>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+									</Grid.RowDefinitions>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="100" />
+										<ColumnDefinition Width="*" />
+									</Grid.ColumnDefinitions>
+									<TextBlock Text="Sash Type:" Grid.Row="0" Grid.Column="0" />
+									<ComboBox Grid.Row="0" Grid.Column="1"
+										ItemsSource="{Binding SashTypes, RelativeSource={RelativeSource AncestorLevel=1, AncestorType=UserControl}}"
+										Name="SashTypeComboBox" SelectionChanged="SashTypeComboBox_SelectionChanged"
+										SelectedIndex="0"
+										IsEnabled="{Binding SashToolActive, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=UserControl}}" />
+									<TextBlock Text="Direction:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2,5,2" />
+									<ComboBox Name="SashDirectionComboBox"
+											  Grid.Row="1" Grid.Column="1"
+											  IsEnabled="{Binding SashToolActive, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=UserControl}}"
+											  SelectedValuePath="Content"
+											  SelectedIndex="0"
+											  SelectionChanged="SashDirectionComboBox_SelectionChanged">
+										<ComboBoxItem>Fixed</ComboBoxItem>
+										<ComboBoxItem>Top</ComboBoxItem>
+										<ComboBoxItem>Right</ComboBoxItem>
+										<ComboBoxItem>Left</ComboBoxItem>
+										<ComboBoxItem>Bottom</ComboBoxItem>
+									</ComboBox>
+								</Grid>
+							</Border>
+						</Expander>
+					</Border>
+					<Border Margin="2" SnapsToDevicePixels="True" BorderThickness="1" BorderBrush="#FF73B5C3">
+						<Border.Background>
+							<LinearGradientBrush EndPoint="0,30" MappingMode="Absolute">
+								<GradientStop Color="#FFC7E1FF" Offset="0"/>
+								<GradientStop Color="White" Offset="1"/>
+							</LinearGradientBrush>
+						</Border.Background>
+						<Expander Header="Filling" Margin="{StaticResource ExpanderMarginBase}" IsExpanded="False" Padding="{StaticResource ExpanderPaddingBase}">
+							<Border Margin="-2,0" Padding="5" Background="White">
+								<Grid>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+									</Grid.RowDefinitions>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="100" />
+										<ColumnDefinition Width="*" />
+									</Grid.ColumnDefinitions>
+									<TextBlock Text="Filling Type:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2,5,2" />
+									<ComboBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5,2,5,2"
+											ItemsSource="{Binding FillingTypes, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=UserControl}}"
+											SelectedIndex="0"
+											Name="FillingTypeComboBox" SelectionChanged="FillingTypeComboBox_SelectionChanged"
+											IsEnabled="{Binding FillingToolActive, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=UserControl}}" />
+                                    <TextBlock Text="Profile Type:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Margin="5,2,5,2" />
+                                    <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5,2,5,2"
+											ItemsSource="{Binding ProfileTypes, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=UserControl}}"
+											SelectedIndex="0"
+											Name="IProfileTypeComboBox" SelectionChanged="IProfileTypeComboBox_SelectionChanged"
+											IsEnabled="{Binding FillingToolActive, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=UserControl}}" />
+                                    <CheckBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5,2,5,2" IsChecked="True"
+                                              x:Name="IncludeIProfileCheckBox" Content="Include I Profile" 
+											  IsEnabled="{Binding FillingToolActive, RelativeSource={RelativeSource Mode=FindAncestor, AncestorLevel=1, AncestorType=UserControl}}"
+											  Click="IncludeIProfileCheckBox_Click"/>
+                                </Grid>
+							</Border>
+						</Expander>
+					</Border>
+				</StackPanel>
+			</ScrollViewer>
+		</Border>
+	</Grid>
+</UserControl>

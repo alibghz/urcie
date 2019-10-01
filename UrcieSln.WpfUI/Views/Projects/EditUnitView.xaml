@@ -1,0 +1,59 @@
+﻿<Window x:Class="UrcieSln.WpfUI.Views.EditUnitView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:System="clr-namespace:System;assembly=mscorlib"
+		xmlns:domain="clr-namespace:UrcieSln.Domain.Entities;assembly=UrcieSln.Domain"
+		xmlns:validations="clr-namespace:UrcieSln.WpfUI.Validations"
+        Title="Unit Details" Height="210" Width="250"
+		ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen">
+	<Window.Resources>
+		<ObjectDataProvider x:Key="projectStatusResource" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+			<ObjectDataProvider.MethodParameters>
+				<x:Type TypeName="domain:ProjectStatus"/>
+			</ObjectDataProvider.MethodParameters>
+		</ObjectDataProvider>
+		<Style TargetType="TextBlock">
+			<Setter Property="Margin" Value="5,2" />
+			<Setter Property="HorizontalAlignment" Value="Right" />
+		</Style>
+		<Style TargetType="TextBox">
+			<Setter Property="Margin" Value="2" />
+		</Style>
+	</Window.Resources>
+	<Grid SnapsToDevicePixels="True">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="2*" />
+			<ColumnDefinition Width="4*" />
+		</Grid.ColumnDefinitions>
+		<TextBlock Grid.Row="0" Grid.Column="0" Text="Code" Margin="0,2,5,2" />
+		<TextBox Grid.Row="0" Grid.Column="1" MouseDoubleClick="SelectAll" GotKeyboardFocus="SelectAll" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton">
+			<TextBox.Text>
+				<Binding Path="Code" UpdateSourceTrigger="PropertyChanged">
+					<Binding.ValidationRules>
+						<validations:NameRule />
+					</Binding.ValidationRules>
+				</Binding>
+			</TextBox.Text>
+		</TextBox>
+		<TextBlock Grid.Row="1" Grid.Column="0" Text="Quantity" Margin="0,2,5,2" />
+		<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Quantity}" MouseDoubleClick="SelectAll" GotKeyboardFocus="SelectAll" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" />
+		<TextBlock Grid.Row="2" Grid.Column="0" Text="Width" Margin="0,2,5,2" />
+		<TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Width}" MouseDoubleClick="SelectAll" GotKeyboardFocus="SelectAll" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" />
+		<TextBlock Grid.Row="3" Grid.Column="0" Text="Height" Margin="0,2,5,2" />
+		<TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Height}" MouseDoubleClick="SelectAll" GotKeyboardFocus="SelectAll" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" />
+		<TextBlock Grid.Row="4" Grid.Column="0" Text="Description" Margin="0,2,5,2" />
+		<TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Description}" MouseDoubleClick="SelectAll" GotKeyboardFocus="SelectAll" PreviewMouseLeftButtonDown="SelectivelyIgnoreMouseButton" />
+		<StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="3" Width="132">
+			<Button Name="CancelButton" Content="Cancel" Margin="5,2,0,2" MinWidth="60" Click="CancelButton_Click" />
+			<Button Name="OkButton" Content="Ok" Margin="5,2,2,2" MinWidth="60" Click="OkButton_Click" />
+		</StackPanel>
+	</Grid>
+</Window>
